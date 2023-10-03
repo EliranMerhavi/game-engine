@@ -2,6 +2,7 @@
 bin/
 ignore/
 int-bin/
+libs/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
