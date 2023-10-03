@@ -1,8 +1,7 @@
 .vs/
 bin/
-ignore/
 int-bin/
-libs/
+ignore/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
