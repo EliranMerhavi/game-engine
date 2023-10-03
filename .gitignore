@@ -1,0 +1,7 @@
+.vs/
+bin/
+ignore/
+int-bin/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
