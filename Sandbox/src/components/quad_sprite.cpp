@@ -13,7 +13,7 @@ void quad_sprite::start()
 void quad_sprite::update(float delta_time)
 {
 	renderer2D::set_color(color);
-	renderer2D::draw_quad(x, y, width, height);
+	renderer2D::quad(x, y, width, height);
 
 	if (time_to_change_color >= 1)
 	{

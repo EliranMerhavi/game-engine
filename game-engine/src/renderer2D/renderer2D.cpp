@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "renderer2D.h"
 #include "shader.h"
-
+#include "math/math.h"
 
 namespace renderer2D
 {
@@ -184,7 +184,34 @@ void renderer2D::set_color(float r, float g, float b, float a)
 	_color = { r, g, b, a };
 }
 
-void renderer2D::draw_quad(float x, float y, float w, float h)
+
+void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
+{
+	glm::f32vec2	v1 = {x, y + h},
+					v2 = {x, y},
+					v3 = {x + w, y},
+					v4 = { x + w, y + h },
+					origin = { x + w / 2, y + h / 2};
+	
+	math::vec::rotate(v1, degrees, origin);
+	math::vec::rotate(v2, degrees, origin);
+	math::vec::rotate(v3, degrees, origin);
+	math::vec::rotate(v4, degrees, origin);
+	
+	vertex vertices[] = {
+		{x + v1.x, y + v1.y, _color.r, _color.g, _color.b, _color.a},
+		{x + v2.x, y + v2.y, _color.r, _color.g, _color.b, _color.a},
+		{x + v3.x, y + v3.y, _color.r, _color.g, _color.b, _color.a},
+		{x + v4.x, y + v4.y, _color.r, _color.g, _color.b, _color.a}
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, quads_count * 4 * sizeof(vertex), sizeof(vertices), vertices);
+
+	quads_count++;
+}	
+
+void renderer2D::quad(float x, float y, float w, float h)
 {
 	if (quads_count == max_quads_count)
 		render_quads();
@@ -202,7 +229,7 @@ void renderer2D::draw_quad(float x, float y, float w, float h)
 	quads_count++;
 }
 
-void renderer2D::draw_line(const glm::f32vec2& from, const glm::f32vec2& to)
+void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 {
 	if (lines_count == max_lines_count)
 		render_lines();
@@ -217,7 +244,7 @@ void renderer2D::draw_line(const glm::f32vec2& from, const glm::f32vec2& to)
 	lines_count++;
 }
 
-void renderer2D::draw_texture(uint32_t tex_index, float x, float y, float w, float h)
+void renderer2D::texture(uint32_t tex_index, float x, float y, float w, float h)
 {
 	if (tex_count == max_tex_count)
 		render_textures();

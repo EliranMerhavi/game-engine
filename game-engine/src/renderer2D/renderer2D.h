@@ -15,10 +15,12 @@ namespace renderer2D
 	void set_color(float r, float g, float b, float a);
 
 	// void draw_circle(float x, float y, float radius);
-	void draw_quad(float x, float y, float w, float h);
-	void draw_line(const glm::f32vec2& from, const glm::f32vec2& to);
-	void draw_texture(uint32_t tex_index, float x, float y, float w, float h);
-
+	void rotated_quad(float x, float y, float w, float h, float degrees);
+	void quad(float x, float y, float w, float h);
+	void line(const glm::f32vec2& from, const glm::f32vec2& to);
+	void texture(uint32_t tex_index, float x, float y, float w, float h);
+	
+	
 	void bind_default_shader();
 
 	void render();

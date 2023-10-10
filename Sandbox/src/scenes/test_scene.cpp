@@ -21,15 +21,15 @@ void test_scene::load_resources()
 {
 }
 
-float x = 0, y = 0;
-void test_scene::render()
-{
-//	renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
-	
-	renderer2D::draw_quad(x, y, 20, 20);
+float x = 200, y = 200, degrees = 0;
 
-	x += 75 * time::delta_time;
-	y += 75 * time::delta_time;
+void test_scene::render()
+{	
+	renderer2D::rotated_quad(x, y, 200, 200, degrees);
+	degrees = fmod(degrees + 0.01, 360);
+
+	//x += 75 * time::delta_time;
+	//y += 75 * time::delta_time;
 }
 
 void test_scene::update()
