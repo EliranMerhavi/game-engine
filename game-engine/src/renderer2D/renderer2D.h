@@ -1,7 +1,7 @@
 #pragma once
 #define GLEW_STATIC
 
-#include "line2D.h"
+#include <glm/glm.hpp>
 #include "shader.h"
 
 namespace renderer2D
@@ -14,16 +14,12 @@ namespace renderer2D
 	void set_color(const glm::f32vec4& color);
 	void set_color(float r, float g, float b, float a);
 
-	void draw_quad(float x, float y, float w, float h);
 	// void draw_circle(float x, float y, float radius);
-	void draw_line(const line2D& line);
-	// void draw_texture(const char* filepath, float x, float y, float w, float h);
+	void draw_quad(float x, float y, float w, float h);
+	void draw_line(const glm::f32vec2& from, const glm::f32vec2& to);
+	void draw_texture(uint32_t tex_index, float x, float y, float w, float h);
 
 	void bind_default_shader();
-
-	void render_quads();
-	void render_lines();
-	// void render_circles();
 
 	void render();
 	void clear();

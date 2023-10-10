@@ -22,6 +22,8 @@ opengl::shader::shader(const std::string& vertex_shader_filepath, const std::str
 	
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+
+
 }
 
 opengl::shader::~shader()
@@ -52,6 +54,11 @@ void opengl::shader::set_uniform_4f(const char* name, float v1, float v2, float 
 void opengl::shader::set_uniform_mat_4f(const char* name, const glm::mat4& mat)
 {
 	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
+}
+
+void opengl::shader::set_uniform_1iv(const char* name, size_t count, int* value)
+{
+	glUniform1iv(get_uniform_location(name), count, value);
 }
 
 int32_t opengl::shader::get_uniform_location(const char* name)

@@ -16,9 +16,10 @@ namespace opengl
 		void set_uniform_4f(const char* name, const glm::f32vec4& vec);
 		void set_uniform_4f(const char* name, float v1, float v2, float v3, float v4);
 		void set_uniform_mat_4f(const char* name, const glm::mat4& mat);
+		void set_uniform_1iv(const char* name, size_t count, int* value);
+		int32_t get_uniform_location(const char* name);
 
 	private:
-		int32_t get_uniform_location(const char* name);
 		static const char* load_shader(const std::string& filepath);
 		static uint32_t compile_shader(uint32_t type, const char* source);
 	private:
