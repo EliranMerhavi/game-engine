@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "application.h"
 #include "renderer2D/renderer2D.h"
+#include "time.h"
 
 namespace game_engine
 {
@@ -25,11 +26,11 @@ namespace game_engine
             renderer2D::clear();
 
             time_point current_time = std::chrono::high_resolution_clock::now();
-            float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_previous_time).count();
-
+            time::delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_previous_time).count();
+                
             if (m_current_scene)
             {
-                m_current_scene->update(delta_time);
+                m_current_scene->update();
                 m_current_scene->render();
             }
             renderer2D::render();

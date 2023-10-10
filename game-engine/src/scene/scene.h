@@ -9,7 +9,7 @@ namespace game_engine
 		virtual void start() = 0;
 		virtual void load_resources() = 0;
 		virtual void render() = 0;
-		virtual void update(float delta_time) = 0;
+		virtual void update() = 0;
 		// virtual ~scene() = 0;
 	};
 }

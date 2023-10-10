@@ -1,3 +1,4 @@
+#define GLEW_STATIC
 #include "game_engine.h"
 #include "scenes/test_scene.h"
 #include <iostream>

@@ -1,9 +1,12 @@
 #include "test_scene.h"
+#include "renderer2D/renderer2D_utils.h"
+#include <iostream>
+#include "core/time.h"
+
 
 test_scene::test_scene()
 {
-	for (int i = 1; i >= 1; i--)
-		quads.emplace_back(0, 0, i * 100, i * 100);
+
 }
 
 test_scene::~test_scene()
@@ -18,15 +21,20 @@ void test_scene::load_resources()
 {
 }
 
+float x = 0, y = 0;
 void test_scene::render()
 {
+//	renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
+	
+	renderer2D::draw_quad(x, y, 20, 20);
+
+	x += 75 * time::delta_time;
+	y += 75 * time::delta_time;
 }
 
-void test_scene::update(float delta_time)
+void test_scene::update()
 {
-	renderer2D::set_color({ 1, 1, 1, 1 });
-	renderer2D::draw_quad(0, 0, 200, 200);
-	//renderer2D::draw_texture("D:\\programming-stuff\\programming-projects\\visual-studio-projects\\game-engine\\Sandbox\\assets\\images\\container.jpg", 0, 0, 200, 200);
+	
 }
 
 void test_scene::on_create()
