@@ -199,10 +199,10 @@ void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
 	math::vec::rotate(v4, degrees, origin);
 	
 	vertex vertices[] = {
-		{x + v1.x, y + v1.y, _color.r, _color.g, _color.b, _color.a},
-		{x + v2.x, y + v2.y, _color.r, _color.g, _color.b, _color.a},
-		{x + v3.x, y + v3.y, _color.r, _color.g, _color.b, _color.a},
-		{x + v4.x, y + v4.y, _color.r, _color.g, _color.b, _color.a}
+		{ v1.x, v1.y, _color.r, _color.g, _color.b, _color.a},
+		{ v2.x, v2.y, _color.r, _color.g, _color.b, _color.a},
+		{ v3.x, v3.y, _color.r, _color.g, _color.b, _color.a},
+		{ v4.x, v4.y, _color.r, _color.g, _color.b, _color.a}
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
