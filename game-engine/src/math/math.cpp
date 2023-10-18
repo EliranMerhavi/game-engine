@@ -9,7 +9,7 @@ void math::vec::rotate(glm::f32vec2& vec, float angle, const glm::f32vec2& origi
 
     float _cos = std::cos(to_radians(angle));
     float _sin = std::sin(to_radians(angle));
-
+    
     vec.x = origin.x + (x * _cos) - (y * _sin);
     vec.y = origin.y + (x * _sin) + (y * _cos);
 }

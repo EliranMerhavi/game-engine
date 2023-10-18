@@ -3,6 +3,7 @@
 #include "scenes/test_scene.h"
 #include <iostream>
 
+
 int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
@@ -10,6 +11,7 @@ int main(int argc, const char** argv)
 	test_scene test;
 	
 	application.set_current_scene(test);
+	application.set_vsync(true);
 	application.run();
 
 

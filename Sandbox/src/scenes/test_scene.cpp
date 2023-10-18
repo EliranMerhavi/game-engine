@@ -25,11 +25,12 @@ float x = 200, y = 200, degrees = 0;
 
 void test_scene::render()
 {	
-	renderer2D::rotated_quad(x, y, 200, 200, degrees);
-	degrees = fmod(degrees + 90 * time::delta_time, 360);
 
-	//x += 75 * time::delta_time;
-	//y += 75 * time::delta_time;
+	renderer2D::set_color({ 1, 0, 0, 1 });
+	renderer2D::circle(250, 250, 250);
+
+	// x += 75 * time::delta_time;
+	// y += 75 * time::delta_time;
 }
 
 void test_scene::update()

@@ -9,8 +9,7 @@ namespace game_engine
         :
         m_window(500, 500, "ONLY FOR TEST"),
         m_current_scene(nullptr),
-        m_running(true),
-        m_previous_time(std::chrono::high_resolution_clock::now())
+        m_running(true)
     {
     }
  
@@ -19,23 +18,28 @@ namespace game_engine
         if (!renderer2D::has_initialized())
             renderer2D::init();
 
+        
         renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
-
+        
+        time_point previous_time = glfwGetTime();
+        
         while (m_running)
         {
+            
             renderer2D::clear();
+            renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
+            
+            time_point current_time = glfwGetTime();
+            time::delta_time = current_time - previous_time;
 
-            time_point current_time = std::chrono::high_resolution_clock::now();
-            time::delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_previous_time).count();
-                
             if (m_current_scene)
             {
                 m_current_scene->update();
                 m_current_scene->render();
             }
-            renderer2D::render();
+            renderer2D::flush();
             m_window.update();
-            m_previous_time = current_time;
+            previous_time = current_time;
         }
 
         renderer2D::shutdown();
@@ -54,6 +58,11 @@ namespace game_engine
     void application::set_current_scene(scene& scene)
     {
         m_current_scene = &scene;
+    }
+
+    void application::set_vsync(bool val)
+    {
+        glfwSwapInterval(val);
     }
 
     application& application::instance()
