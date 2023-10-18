@@ -17,7 +17,10 @@ namespace game_engine
 		void on_window_close();
 		void set_current_scene(scene& scene);
 		void set_vsync(bool val);
-
+		
+		float& limitFPS();
+		float width() const;
+		float height() const;
 
 		static application& instance();
 	private:
@@ -25,6 +28,6 @@ namespace game_engine
 		window m_window;
 		scene* m_current_scene;
 		bool m_running;
-		
+		float m_limitFPS, m_width, m_height;
 	};
 }

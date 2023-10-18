@@ -9,7 +9,9 @@ namespace game_engine
         :
         m_window(500, 500, "ONLY FOR TEST"),
         m_current_scene(nullptr),
-        m_running(true)
+        m_running(true),
+        m_width(500),
+        m_height(500)
     {
     }
  
@@ -18,28 +20,31 @@ namespace game_engine
         if (!renderer2D::has_initialized())
             renderer2D::init();
 
-        
-        renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
-        
         time_point previous_time = glfwGetTime();
         
         while (m_running)
         {
             
             renderer2D::clear();
-            renderer2D::set_camera(glm::ortho(0.0f, (float)m_window.width(), (float)m_window.height(), 0.0f, -1.0f, 1.0f));
             
             time_point current_time = glfwGetTime();
-            time::delta_time = current_time - previous_time;
+            time::delta_time += (current_time - previous_time) / m_limitFPS;
+            previous_time = current_time;
 
-            if (m_current_scene)
-            {
+            if (!m_current_scene)
+                continue;
+            
+            if (time::delta_time >= 1.0) {
                 m_current_scene->update();
-                m_current_scene->render();
+                time::delta_time--;
             }
+
+            m_current_scene->render();
+            
+
             renderer2D::flush();
             m_window.update();
-            previous_time = current_time;
+            
         }
 
         renderer2D::shutdown();
@@ -63,6 +68,21 @@ namespace game_engine
     void application::set_vsync(bool val)
     {
         glfwSwapInterval(val);
+    }
+
+    float& application::limitFPS()
+    {
+        return m_limitFPS;
+    }
+
+    float application::width() const
+    {
+        return m_width;
+    }
+
+    float application::height() const
+    {
+        return m_height;
     }
 
     application& application::instance()
