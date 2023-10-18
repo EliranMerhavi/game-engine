@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "shader.h"
+#include "orthographic_camera.h"
 
 namespace renderer2D
 {
@@ -10,8 +11,8 @@ namespace renderer2D
 	bool has_initialized();
 	void shutdown();
 
-
-	void set_camera(const glm::mat4& camera);
+	
+	void set_camera(const game_engine::orthographic_camera& camera);
 	void set_color(const glm::f32vec4& color);
 	void set_color(float r, float g, float b, float a);
 

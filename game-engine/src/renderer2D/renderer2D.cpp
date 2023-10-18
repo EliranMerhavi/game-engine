@@ -19,7 +19,6 @@ namespace renderer2D
 		float center[2];
 	};
 
-
 	struct tex_vertex {
 		float position[2];
 		float color[4];
@@ -52,22 +51,16 @@ namespace renderer2D
 			 tex_vbo, tex_ibo, tex_vao,
 			 circle_vbo, circle_ibo, circle_vao,
 			 line_vbo, line_vao;
-
-	void flush_quads();
-	void flush_lines();
-	void flush_textures();
-	void flush_circles();
 }
 
-
-void renderer2D::set_camera(const glm::mat4& camera)
+void renderer2D::set_camera(const game_engine::orthographic_camera& camera)
 {
 	default_shader->bind();
-	default_shader->set_uniform_mat_4f("u_mvp", camera);
+	default_shader->set_uniform_mat_4f("u_mvp", camera.view_projection());
 	default_tex_shader->bind();
-	default_tex_shader->set_uniform_mat_4f("u_mvp", camera);
+	default_tex_shader->set_uniform_mat_4f("u_mvp", camera.view_projection());
 	default_circle_shader->bind();
-	default_circle_shader->set_uniform_mat_4f("u_mvp", camera);
+	default_circle_shader->set_uniform_mat_4f("u_mvp", camera.view_projection());
 }
 
 void renderer2D::init()
@@ -233,7 +226,7 @@ void renderer2D::set_color(float r, float g, float b, float a)
 void renderer2D::circle(float x, float y, float radius)
 {
 	if (circle_count == max_circles_count)
-		flush_circles();
+		flush();
 
 	circle_vertex vertices[] = {
 		{x - radius, y - radius, _color.r, _color.g, _color.b, _color.a, radius, x, y},
@@ -277,7 +270,7 @@ void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
 void renderer2D::quad(float x, float y, float w, float h)
 {
 	if (quads_count == max_quads_count)
-		flush_quads();
+		flush();
 
 	vertex vertices[] = {
 		{x	  , y + h, _color.r, _color.g, _color.b, _color.a},
@@ -295,7 +288,7 @@ void renderer2D::quad(float x, float y, float w, float h)
 void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 {
 	if (lines_count == max_lines_count)
-		flush_lines();
+		flush();
 
 	vertex vertices[] = {
 		{from.x, from.y, _color.r, _color.g, _color.b, _color.a},
@@ -310,7 +303,7 @@ void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 void renderer2D::texture(uint32_t tex_index, float x, float y, float w, float h)
 {
 	if (tex_count == max_tex_count)
-		flush_textures();
+		flush();
 
 	tex_vertex vertices[] = {
 		// positions	// colors				    // texture coords
@@ -337,45 +330,27 @@ void renderer2D::bind_default_shader()
 	default_shader->bind();
 }
 
-void renderer2D::flush_quads()
+void renderer2D::flush()
 {
-	glBindVertexArray(quad_vao);
-	glDrawElements(GL_TRIANGLES, quads_count * 6, GL_UNSIGNED_INT, nullptr);
-	
-	quads_count = 0;
-}
+	default_shader->bind();
 
-void renderer2D::flush_lines()
-{
 	glBindVertexArray(line_vao);
 	glDrawArrays(GL_LINES, 0, lines_count * 2);
 
 	lines_count = 0;
-}
 
-void renderer2D::flush_textures()
-{
-	default_tex_shader->bind();
+	glBindVertexArray(quad_vao);
+	glDrawElements(GL_TRIANGLES, quads_count * 6, GL_UNSIGNED_INT, nullptr);
+	quads_count = 0;
+
 	glBindVertexArray(tex_vao);
 	glDrawElements(GL_TRIANGLES, tex_count * 6, GL_UNSIGNED_INT, nullptr);
-
 	tex_count = 0;
-}
 
-void renderer2D::flush_circles()
-{
 	default_circle_shader->bind();
 	glBindVertexArray(circle_vao);
 	glDrawElements(GL_TRIANGLES, circle_count * 6, GL_UNSIGNED_INT, nullptr);
 	circle_count = 0;
-}
-void renderer2D::flush()
-{
-	default_shader->bind();
-	flush_lines();
-	flush_quads();
-	flush_textures();
-	flush_circles();
 }
 
 void renderer2D::clear()

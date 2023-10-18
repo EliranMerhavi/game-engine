@@ -17,4 +17,5 @@ public:
 	virtual void on_create() override;
 private:
 	std::vector<quad_sprite> quads;
+	game_engine::orthographic_camera camera;
 };
