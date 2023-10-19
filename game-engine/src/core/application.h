@@ -28,6 +28,6 @@ namespace game_engine
 		window m_window;
 		scene* m_current_scene;
 		bool m_running;
-		float m_limitFPS, m_width, m_height;
+		float m_limitFPS;
 	};
 }

@@ -8,21 +8,21 @@ namespace renderer2D
 	bool is_initialized = false;
 
 	struct vertex {
-		float position[2];
+		glm::f32vec4 position;
 		float color[4];
 	};
 
 	struct circle_vertex {
-		float position[2];
+		glm::f32vec2 position;
 		float color[4];
 		float radius;
 		float center[2];
 	};
 
 	struct tex_vertex {
-		float position[2];
+		glm::f32vec4 position;
 		float color[4];
-		float tex_coords[2];
+		glm::f32vec2 tex_coords;
 		uint32_t tex_index;
 	};
 
@@ -44,6 +44,7 @@ namespace renderer2D
 
 
 	glm::f32vec4 _color{ 1.0f,1.0f,1.0f,1.0f };
+
 	std::unique_ptr<opengl::shader> default_shader, default_tex_shader, default_circle_shader;
 
 	uint32_t quads_count{ 0 }, lines_count{ 0 }, tex_count{ 0 }, circle_count{ 0 };
@@ -51,6 +52,8 @@ namespace renderer2D
 			 tex_vbo, tex_ibo, tex_vao,
 			 circle_vbo, circle_ibo, circle_vao,
 			 line_vbo, line_vao;
+
+	glm::f32vec4 quad_vertices[4];
 }
 
 void renderer2D::set_camera(const game_engine::orthographic_camera& camera)
@@ -73,6 +76,8 @@ void renderer2D::init()
 	default_tex_shader = std::make_unique<opengl::shader>("assets/shaders/tex_vertex.shader", "assets/shaders/tex_fragment.shader");
 	default_shader = std::make_unique<opengl::shader>("assets/shaders/vertex.shader", "assets/shaders/fragment.shader");
 	default_circle_shader = std::make_unique<opengl::shader>("assets/shaders/circle_vertex.shader", "assets/shaders/circle_fragment.shader");
+	
+	set_camera(game_engine::orthographic_camera(-0.5f, 0.5f, -0.5f, 0.5f));
 	default_shader->bind();
 	
 
@@ -110,7 +115,7 @@ void renderer2D::init()
 	glVertexAttribPointer(0, sizeof(vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (const void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, sizeof(vertex::color) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex), (const void*)offsetof(vertex, color));
-	
+
 	// ------------------------------------------
 	// initialization of the line vao
 	// ------------------------------------------
@@ -185,6 +190,10 @@ void renderer2D::init()
 	glVertexAttribPointer(3, sizeof(circle_vertex::center) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(circle_vertex), (const void*)offsetof(circle_vertex, center));
 	// ------------------------------------------
 
+	quad_vertices[0] = glm::f32vec4{ -0.5f, -0.5f, 0.0f, 1.0f };
+	quad_vertices[1] = glm::f32vec4{ -0.5f,  0.5f, 0.0f, 1.0f };
+	quad_vertices[2] = glm::f32vec4{ 0.5f,  0.5f, 0.0f, 1.0f };
+	quad_vertices[3] = glm::f32vec4{ 0.5f, -0.5f, 0.0f, 1.0f };
 
 	delete[] samplers;
 	delete[] indices;
@@ -213,14 +222,14 @@ void renderer2D::shutdown()
 	glDeleteVertexArrays(1, &circle_vao);
 }
 
+void renderer2D::set_color(float r, float g, float b, float a)
+{
+	set_color({ r, g, b, a });
+}
+
 void renderer2D::set_color(const glm::f32vec4& color)
 {
 	_color = color;
-}
-
-void renderer2D::set_color(float r, float g, float b, float a)
-{
-	_color = { r, g, b, a };
 }
 
 void renderer2D::circle(float x, float y, float radius)
@@ -229,60 +238,15 @@ void renderer2D::circle(float x, float y, float radius)
 		flush();
 
 	circle_vertex vertices[] = {
-		{x - radius, y - radius, _color.r, _color.g, _color.b, _color.a, radius, x, y},
-		{x - radius, y + radius, _color.r, _color.g, _color.b, _color.a, radius, x, y},
-		{x + radius, y + radius, _color.r, _color.g, _color.b, _color.a, radius, x, y},
-		{x + radius, y - radius, _color.r, _color.g, _color.b, _color.a, radius, x, y}
+		{{x - radius, y - radius}, _color.r, _color.g, _color.b, _color.a, radius, x, y},
+		{{x - radius, y + radius}, _color.r, _color.g, _color.b, _color.a, radius, x, y},
+		{{x + radius, y + radius}, _color.r, _color.g, _color.b, _color.a, radius, x, y},
+		{{x + radius, y - radius}, _color.r, _color.g, _color.b, _color.a, radius, x, y}
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, circle_vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, circle_count * 4 * sizeof(circle_vertex), sizeof(vertices), vertices);
 	circle_count++;
-}
-
-
-void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
-{
-	glm::f32vec2	v1 = {x, y + h},
-					v2 = {x, y},
-					v3 = {x + w, y},
-					v4	= { x + w, y + h },
-					origin = { x + w / 2, y + h / 2};
-	
-	math::vec::rotate(v1, degrees, origin);
-	math::vec::rotate(v2, degrees, origin);
-	math::vec::rotate(v3, degrees, origin);
-	math::vec::rotate(v4, degrees, origin);
-	
-	vertex vertices[] = {
-		{ v1.x, v1.y, _color.r, _color.g, _color.b, _color.a},
-		{ v2.x, v2.y, _color.r, _color.g, _color.b, _color.a},
-		{ v3.x, v3.y, _color.r, _color.g, _color.b, _color.a},
-		{ v4.x, v4.y, _color.r, _color.g, _color.b, _color.a}
-	};
-
-	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-	glBufferSubData(GL_ARRAY_BUFFER, quads_count * 4 * sizeof(vertex), sizeof(vertices), vertices);
-
-	quads_count++;
-}	
-
-void renderer2D::quad(float x, float y, float w, float h)
-{
-	if (quads_count == max_quads_count)
-		flush();
-
-	vertex vertices[] = {
-		{x	  , y + h, _color.r, _color.g, _color.b, _color.a},
-		{x	  , y	 , _color.r, _color.g, _color.b, _color.a},
-		{x + w, y	 , _color.r, _color.g, _color.b, _color.a},
-		{x + w, y + h, _color.r, _color.g, _color.b, _color.a}
-	};
-
-	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-	glBufferSubData(GL_ARRAY_BUFFER, quads_count * 4 * sizeof(vertex), sizeof(vertices), vertices);
-
-	quads_count++;
 }
 
 void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
@@ -291,37 +255,105 @@ void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 		flush();
 
 	vertex vertices[] = {
-		{from.x, from.y, _color.r, _color.g, _color.b, _color.a},
-		{to.x,   to.y,   _color.r, _color.g, _color.b, _color.a}
+		{{from, 0.0f, 1.0f}, _color.r, _color.g, _color.b, _color.a},
+		{{to, 0.0f, 1.0f},   _color.r, _color.g, _color.b, _color.a}
 	};
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, lines_count * 2 * sizeof(vertex), sizeof(vertices), vertices);
 	lines_count++;
 }
 
-void renderer2D::texture(uint32_t tex_index, float x, float y, float w, float h)
+void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
 {
-	if (tex_count == max_tex_count)
+	renderer2D::rotated_quad({ x, y }, { w, h }, degrees);
+}
+
+void renderer2D::rotated_quad(const glm::f32vec2& position, const glm::f32vec2& dimensions, float degrees)
+{
+	glm::f32mat4 transform(1.0f);
+
+	transform = glm::translate(transform, glm::f32vec3(position, 1.0f));
+	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
+	transform = glm::rotate(transform, glm::radians(degrees), glm::f32vec3(0, 0, 1));
+
+	renderer2D::quad(transform);
+}
+
+void renderer2D::quad(float x, float y, float w, float h)
+{
+	renderer2D::quad({x, y}, {w, h});
+}
+
+void renderer2D::quad(const glm::f32vec2& position, const glm::f32vec2& dimensions)
+{
+	glm::f32mat4 transform(1.0f);
+	
+	transform = glm::translate(transform, glm::f32vec3(position, 0.0f));
+	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
+
+	renderer2D::quad(transform);
+}
+
+void renderer2D::quad(const glm::f32mat4& transform)
+{
+	if (quads_count == max_quads_count)
 		flush();
 
+	vertex vertices[] = {
+		{transform * quad_vertices[0], _color.r, _color.g, _color.b, _color.a},
+		{transform * quad_vertices[1], _color.r, _color.g, _color.b, _color.a},
+		{transform * quad_vertices[2], _color.r, _color.g, _color.b, _color.a},
+		{transform * quad_vertices[3], _color.r, _color.g, _color.b, _color.a}
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, quads_count * 4 * sizeof(vertex), sizeof(vertices), vertices);
+	quads_count++;
+}
+
+void renderer2D::texture(uint32_t tex_index, float x, float y, float w, float h)
+{	
+	renderer2D::texture(tex_index, { x, y }, { w, h });
+}
+
+void renderer2D::texture(uint32_t tex_index, const glm::f32vec2& position, const glm::f32vec2& dimensions)
+{
+	glm::f32mat4 transform(1.0f);
+
+	transform = glm::translate(transform, glm::f32vec3(position, 0.0f));
+	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
+
+	renderer2D::texture(tex_index, transform);
+}
+
+void renderer2D::texture(uint32_t tex_index, const glm::f32mat4& transform)
+{
+	static constexpr glm::f32vec2 tex_coords[] = { 
+		glm::f32vec2(1.0f, 1.0f),
+		glm::f32vec2(1.0f, 0.0f),
+		glm::f32vec2(0.0f, 0.0f),
+		glm::f32vec2(0.0f, 1.0f) 
+	};
+
+
+	if (tex_count == max_tex_count)
+		flush();
+	
 	tex_vertex vertices[] = {
 		// positions	// colors				    // texture coords
-		{x	  ,	y + h,  1.0f, 0.0f, 0.0f, _color.a,  1.0f, 1.0f, tex_count},   // top right
-		{x	  ,	y	 ,  0.0f, 1.0f, 0.0f, _color.a,  1.0f, 0.0f, tex_count},   // bottom right
-		{x + w,	y	 ,  0.0f, 0.0f, 1.0f, _color.a,  0.0f, 0.0f, tex_count},   // bottom left
-		{x + w, y + h,  1.0f, 1.0f, 0.0f, _color.a,  0.0f, 1.0f, tex_count}    // top left 
+		{transform * quad_vertices[0],  1.0f, 0.0f, 0.0f, _color.a, tex_coords[0], tex_count},   // top right
+		{transform * quad_vertices[1],  0.0f, 1.0f, 0.0f, _color.a, tex_coords[1], tex_count},   // bottom right
+		{transform * quad_vertices[2],  0.0f, 0.0f, 1.0f, _color.a, tex_coords[2], tex_count},   // bottom left
+		{transform * quad_vertices[3],  1.0f, 1.0f, 0.0f, _color.a, tex_coords[3], tex_count}    // top left 
 	};
-	
+
 	default_tex_shader->bind();
-	
+
 	glBindTextureUnit(tex_count, tex_index);
 
 	glBindBuffer(GL_ARRAY_BUFFER, tex_vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, tex_count * 4 * sizeof(tex_vertex), sizeof(vertices), vertices);
-	
-	glBindVertexArray(tex_vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	tex_count++;
 }
 
@@ -336,13 +368,13 @@ void renderer2D::flush()
 
 	glBindVertexArray(line_vao);
 	glDrawArrays(GL_LINES, 0, lines_count * 2);
-
 	lines_count = 0;
 
 	glBindVertexArray(quad_vao);
 	glDrawElements(GL_TRIANGLES, quads_count * 6, GL_UNSIGNED_INT, nullptr);
 	quads_count = 0;
 
+	default_tex_shader->bind();
 	glBindVertexArray(tex_vao);
 	glDrawElements(GL_TRIANGLES, tex_count * 6, GL_UNSIGNED_INT, nullptr);
 	tex_count = 0;

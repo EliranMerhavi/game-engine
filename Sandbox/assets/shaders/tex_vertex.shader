@@ -1,6 +1,6 @@
 #version 410 core
 
-layout (location = 0) in vec2 a_position;
+layout (location = 0) in vec4 a_position;
 layout (location = 1) in vec4 a_color;
 layout (location = 2) in vec2 a_tex_coord;
 layout (location = 3) in int a_tex_index;
@@ -16,5 +16,5 @@ void main()
     v_color = a_color;
     v_tex_coord = a_tex_coord;
     v_tex_index = a_tex_index;
-    gl_Position = u_mvp * vec4(a_position, 1.0, 1.0);
+    gl_Position = u_mvp * a_position;
 }

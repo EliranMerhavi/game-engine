@@ -9,9 +9,7 @@ namespace game_engine
         :
         m_window(500, 500, "ONLY FOR TEST"),
         m_current_scene(nullptr),
-        m_running(true),
-        m_width(500),
-        m_height(500)
+        m_running(true)
     {
     }
  
@@ -77,12 +75,12 @@ namespace game_engine
 
     float application::width() const
     {
-        return m_width;
+        return m_window.width();
     }
 
     float application::height() const
     {
-        return m_height;
+        return m_window.height();
     }
 
     application& application::instance()
