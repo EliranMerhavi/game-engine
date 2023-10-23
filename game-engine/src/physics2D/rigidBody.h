@@ -1,6 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
-#include "renderer2D/renderer2D_utils.h"
+#include "renderer2D/renderer2D.h"
 #include <iostream>
 
 

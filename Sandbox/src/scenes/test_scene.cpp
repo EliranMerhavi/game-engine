@@ -26,8 +26,8 @@ void test_scene::load_resources()
 }
 
 rigidBody C(50, 0, 100, 0, 1, { 200,100 }, { 0,0 }, "square");
-rigidBody B(50, 0, 100, 0.01, 1, { 200, 300 }, { 1,0 }, "square");
-rigidBody D(50, 1, 50, -0.3, 0.07, { 640, 220 }, { -4, 0 }, "square");
+rigidBody B(50, 0, 100, 0, 1, { 200, 300 }, { 0,0 }, "square");
+rigidBody D(50, 0, 50, 0, 0.07, { 640, 220 }, { -4, 0 }, "square");
 
 
 
@@ -39,7 +39,10 @@ void displayRect(rigidBody A) {
 bool collided = false;
 void test_scene::render()
 {	
-
+	renderer2D::set_camera(camera);
+	displayRect(C);
+	displayRect(B);
+	displayRect(D);
 }
 
 void test_scene::update()
@@ -48,8 +51,8 @@ void test_scene::update()
 	C.updateRect(1);
 	B.updateRect(1);
 	D.updateRect(1);
-	collisions::angularCollision(C, B,1);
-	collisions::angularCollision(D,B, 1);
+	collisions::angularCollision(C, B, 1);
+	collisions::angularCollision(D, B, 1);
 	collisions::angularCollision(C, D, 1);
 	//std::cout << A.omega << ", " << B.omega << "\n";
 
