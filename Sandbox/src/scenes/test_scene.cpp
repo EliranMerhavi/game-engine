@@ -7,10 +7,10 @@
 
 
 
-test_scene::test_scene()
+test_scene::test_scene() : 
+	camera(0.0f, game_engine::application::instance().width(), game_engine::application::instance().height(), 0.0f)
+	//camera(0.0f, game_engine::application::instance().width(), game_engine::application::instance().height(), 0.0f)
 {
-	for (int i = 1; i >= 1; i--)
-		quads.emplace_back(0, 0, i * 100, i * 100);
 }
 
 test_scene::~test_scene()
@@ -38,12 +38,8 @@ void displayRect(rigidBody A) {
 
 bool collided = false;
 void test_scene::render()
-{
-	//float angA = (A.angle - 0.7853) * 57.295;
-	//float angB = (B.angle - 0.7853) * 57.295;
-	displayRect(C);
-	displayRect(B);
-	displayRect(D);
+{	
+
 }
 
 void test_scene::update()

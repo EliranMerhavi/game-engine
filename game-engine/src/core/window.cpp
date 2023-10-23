@@ -36,7 +36,7 @@ namespace game_engine
 			if (error != GLEW_OK)
 				throw errors::library_init_error(errors::library_enum::GLEW, "error when calling glewInit()\nerror message: " + std::string((const char*)glewGetErrorString(error)));
 
-#ifdef _DEBUG
+#ifdef DEBUG
 			glEnable(GL_DEBUG_OUTPUT);
 			glDebugMessageCallback(opengl::debug::MessageCallBack, 0);
 #endif

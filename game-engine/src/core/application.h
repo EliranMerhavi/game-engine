@@ -8,7 +8,7 @@ namespace game_engine
 {
 	class application
 	{
-		using time_point = std::chrono::steady_clock::time_point;
+		using time_point = double;
 	private:
 		application();
 	public:
@@ -16,12 +16,18 @@ namespace game_engine
 		void close();
 		void on_window_close();
 		void set_current_scene(scene& scene);
+		void set_vsync(bool val);
+		
+		float& limitFPS();
+		float width() const;
+		float height() const;
 
 		static application& instance();
 	private:
+
 		window m_window;
 		scene* m_current_scene;
 		bool m_running;
-		time_point m_previous_time;
+		float m_limitFPS;
 	};
 }
