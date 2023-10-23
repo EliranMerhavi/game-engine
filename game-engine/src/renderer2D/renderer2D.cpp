@@ -253,7 +253,7 @@ void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 {
 	if (lines_count == max_lines_count)
 		flush();
-
+	
 	vertex vertices[] = {
 		{{from, 0.0f, 1.0f}, _color.r, _color.g, _color.b, _color.a},
 		{{to, 0.0f, 1.0f},   _color.r, _color.g, _color.b, _color.a}
