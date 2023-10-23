@@ -252,7 +252,7 @@ void collisions::angularCollision(rigidBody& A, rigidBody& B, float restitution)
 	}
 
 	//Calculate the actual collisions. This is shockingly easy!
-	//Finding the collision point needs to be done somewhat better.
+	// TODO: Finding the collision point needs to be done somewhat better.
 	intersectionPoint = (A.position + B.position);
 	intersectionPoint.x /= 2;
 	intersectionPoint.y /= 2;
@@ -265,7 +265,7 @@ void collisions::angularCollision(rigidBody& A, rigidBody& B, float restitution)
 	
 	A.omega = A.omega + rAP * j / A.moment;
 	B.omega = B.omega + rBP * j / B.moment;
-	//std::cout << normal.x << "," << normal.y << "\n";
+	
 }
 
 

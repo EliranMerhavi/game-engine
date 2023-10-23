@@ -50,3 +50,8 @@ void rigidBody::printVertices()
     std::cout << "Vertex 2:" << this->vertices[2].x << "," << this->vertices[2].y << " \n";
     std::cout << "Vertex 3:" << this->vertices[3].x << "," << this->vertices[3].y << " \n";
 }
+
+void rigidBody::applyForce()
+{
+
+}

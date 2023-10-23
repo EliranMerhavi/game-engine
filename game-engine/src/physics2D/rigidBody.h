@@ -16,8 +16,11 @@ public:
     std::string type;
     float moment;
     glm::f32vec2 vertices[4];
+    float acceleration;
+
     rigidBody(float mass, float angle, float radius, float omega, float restitution, glm::f32vec2 position, glm::f32vec2 velocity, std::string type);
     void updateRect(float dt);
     void printVertices();
-
+    void applyForce();
+    
 };
