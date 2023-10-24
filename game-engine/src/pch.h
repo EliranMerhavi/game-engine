@@ -30,6 +30,3 @@
 
 #include <math.h>
 #include <limits>
-
-#include "utils/errors.h"
-#include "utils/typedefs.h"

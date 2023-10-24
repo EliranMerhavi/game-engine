@@ -7,14 +7,15 @@
 int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
-	game_engine::application& application{ game_engine::application::instance() };
-	test_scene test;
 	
-	application.limitFPS() = 1.0f / 60.0f;
-	application.set_current_scene(test);
-	application.set_vsync(true);
-	application.run();
+	test_scene test;
+	config_t config;
 
+	config.limitFPS = 1.0f / 60.0f;
+	config.vsync = true;
+
+	game_engine::set_scene(test);
+	game_engine::run(config);
 
 	return 0;
 }

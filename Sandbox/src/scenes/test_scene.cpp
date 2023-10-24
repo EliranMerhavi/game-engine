@@ -1,46 +1,43 @@
 #include "test_scene.h"
-#include "renderer2D/renderer2D_utils.h"
+
 #include <iostream>
 #include "core/time.h"
+#include "physics2D/Collisions.h"
+#include "scene/game_object.h"
+#include "renderer2D/renderer2D.h"
+#include "scene/components.h"
+#include "glm/gtc/matrix_transform.hpp"
 
-
-test_scene::test_scene() : 
-	camera(0.0f, game_engine::application::instance().width(), game_engine::application::instance().height(), 0.0f)
-	//camera(0.0f, game_engine::application::instance().width(), game_engine::application::instance().height(), 0.0f)
+test_scene::test_scene()
 {
 
+}
+
+float x = 0, y = 0, degrees = 0.0f;
+
+void test_scene::on_create()
+{
+	game_engine::game_object camera = create_game_object(), obj = create_game_object();
+	
+	camera.add<camera_component>(camera_component{ { 0.0f, 500.0f, 500.0f, 0.0f } });
+	
+	set_primary_camera(camera);
+
+	obj.get<transform_t>().set_position(glm::f32vec2{ 250.0f, 250.0f });
+	obj.get<transform_t>().set_scale(glm::f32vec2{ 250, 250 });
+
+	obj.add<renderable_component>([obj] {
+		renderer2D::quad(obj.get<transform_t>().transform());
+	});
+
+	obj.add<updateable_component>([obj] {
+		auto& transform = obj.get<transform_t>();
+		transform.set_rotation(fmod(transform.rotation() + time::delta_time(), 360));
+	});	
 }
 
 test_scene::~test_scene()
 {
 }
 
-void test_scene::start()
-{
-}
 
-void test_scene::load_resources()
-{
-}
-
-float x = 200, y = 200, degrees = 0;
-
-void test_scene::render()
-{	
-	renderer2D::set_camera(camera);
-	renderer2D::set_color({ 1, 0, 0, 1 });
-	renderer2D::rotated_quad(250, 250, 250, 250, degrees);
-	
-	degrees = fmod(degrees + time::delta_time, 360);
-
-	// x += 75 * time::delta_time;
-	// y += 75 * time::delta_time;
-}
-
-void test_scene::update()
-{
-}
-
-void test_scene::on_create()
-{
-}

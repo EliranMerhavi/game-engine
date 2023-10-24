@@ -21,11 +21,11 @@ namespace renderer2D
 
 	void rotated_quad(float x, float y, float w, float h, float degrees);
 	void rotated_quad(const glm::f32vec2& position, const glm::f32vec2& dimensions, float degrees);
-	
+	void rotated_quad(const glm::f32mat4& transform, float degrees);
+
 	void quad(float x, float y, float w, float h);
 	void quad(const glm::f32vec2& position, const glm::f32vec2& dimensions);
 	void quad(const glm::f32mat4& transform);
-
 
 	
 	void texture(uint32_t tex_index, float x, float y, float w, float h);

@@ -1,11 +1,16 @@
 #pragma once
 
+#include "core/config.h"
 #include "scene/scene.h"
-#include "scene/game_object.h"
-#include "scene/component.h"
 
-// renderer
-#include "renderer2D/renderer2D.h"
+namespace game_engine
+{
+	void run(const config_t& config={});
+	void set_scene(scene& scene);
 
-#include "core/application.h"
-#include "core/window.h"
+	namespace config
+	{
+		void set_vsync(bool vsync);
+		void set_limitFPS(float fps);
+	}
+}

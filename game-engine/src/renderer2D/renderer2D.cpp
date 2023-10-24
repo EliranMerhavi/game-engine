@@ -273,11 +273,16 @@ void renderer2D::rotated_quad(const glm::f32vec2& position, const glm::f32vec2& 
 {
 	glm::f32mat4 transform(1.0f);
 
-	transform = glm::translate(transform, glm::f32vec3(position, 1.0f));
+	transform = glm::translate(transform, glm::f32vec3(position, 0.0f));
 	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
 	transform = glm::rotate(transform, glm::radians(degrees), glm::f32vec3(0, 0, 1));
 
 	renderer2D::quad(transform);
+}
+
+void renderer2D::rotated_quad(const glm::f32mat4& transform, float degrees)
+{
+	renderer2D::quad(glm::rotate(transform, glm::radians(degrees), glm::f32vec3(0, 0, 1)));
 }
 
 void renderer2D::quad(float x, float y, float w, float h)
