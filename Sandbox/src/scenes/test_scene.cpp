@@ -1,6 +1,7 @@
 #include "test_scene.h"
 
 #include <iostream>
+#include "physics2D/rigidBody.h"
 #include "core/time.h"
 #include "physics2D/Collisions.h"
 #include "scene/game_object.h"
@@ -10,7 +11,6 @@
 
 test_scene::test_scene()
 {
-
 }
 
 float x = 0, y = 0, degrees = 0.0f;
