@@ -11,6 +11,7 @@
 #include <list>
 #include <queue>
 #include <string>
+#include <bitset>
 
 #include <any>
 #include <functional>
@@ -30,6 +31,3 @@
 
 #include <math.h>
 #include <limits>
-
-#include "utils/errors.h"
-#include "utils/typedefs.h"

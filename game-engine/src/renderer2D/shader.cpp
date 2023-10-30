@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "shader.h"
+#include "glm/gtc/type_ptr.hpp"
 
 opengl::shader::shader(const std::string& vertex_shader_filepath, const std::string& fragment_shader_filepath)
 {
@@ -53,7 +54,12 @@ void opengl::shader::set_uniform_4f(const char* name, float v1, float v2, float 
 
 void opengl::shader::set_uniform_mat_4f(const char* name, const glm::mat4& mat)
 {
-	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void opengl::shader::set_uniform_mat_3f(const char* name, const glm::mat3& mat)
+{
+	glUniformMatrix3fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 void opengl::shader::set_uniform_1iv(const char* name, size_t count, int* value)
