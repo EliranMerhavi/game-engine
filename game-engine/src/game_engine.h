@@ -1,11 +1,13 @@
 #pragma once
 
 #include "core/config.h"
-#include "scene/scene.h"
 
 namespace game_engine
 {
-	void run(const config_t& config={});
+	class scene;
+
+	void init(const config_t& config={});
+	void run();
 	void set_scene(scene& scene);
 
 	namespace config

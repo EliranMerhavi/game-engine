@@ -3,7 +3,7 @@
 #include "core/config.h"
 #include "core/time.h"
 #include "scene/scene.h"
-#include "renderer2D/opengl_debug.h"
+
 #include "renderer2D/renderer2D.h"
 
 
@@ -14,12 +14,18 @@ namespace game_engine
     scene* current_scene;
     GLFWwindow* window;
 
-    void init();
     void on_window_close();
 }
 
-void game_engine::init()
+void game_engine::on_window_close()
 {
+    running = false;
+}
+
+void game_engine::init(const config_t& config)
+{
+    config_data = config;
+    
     if (!glfwInit())
         throw std::exception("error when calling glfwInit()");
 
@@ -36,32 +42,31 @@ void game_engine::init()
 
 #ifdef DEBUG
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(opengl::debug::MessageCallBack, 0);
+    glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+        {
+            fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            (type == GL_DEBUG_TYPE_ERROR ? "[GL ERROR]" : ""),
+            type, severity, message);
+
+    if (type == GL_DEBUG_TYPE_ERROR)
+    {
+        __debugbreak();
+    }
+        }, 0);
 #endif
-    
+
     glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
         on_window_close();
     });
 
-    if (!renderer2D::has_initialized())
-        renderer2D::init();
-    
+    renderer2D::init();
     config::set_vsync(config_data.vsync);
-    running = true;
 }
 
-void game_engine::on_window_close()
+void game_engine::run()
 {
-    running = false;
-}
-
-void game_engine::run(const config_t& config)
-{
-    config_data = config;
-    init();
-    
     float previous_time = glfwGetTime();
-    
+    running = true;
     while (running)
     {
         renderer2D::clear();
@@ -83,7 +88,6 @@ void game_engine::run(const config_t& config)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
     renderer2D::shutdown();
     glfwTerminate();
 }

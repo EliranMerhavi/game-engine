@@ -11,6 +11,7 @@
 #include <list>
 #include <queue>
 #include <string>
+#include <bitset>
 
 #include <any>
 #include <functional>

@@ -1,22 +1,15 @@
 #pragma once
 
-#include <functional>
-#include <unordered_map>
-#include <type_traits>
-#include <string>
-#include "scene/components.h"
-
+#include "ecs/components.h"
 #include "entt/entt.hpp"
-#include "scene.h"
 
 namespace game_engine
 {
-	class component;
-
 	class game_object
 	{
 	public:
 		game_object(const game_object&) = default;
+		game_object(entt::entity id, entt::registry& registry);
 		game_object(entt::registry& registry);
 		
 
@@ -32,6 +25,7 @@ namespace game_engine
 			return m_registry.get<T>(m_id);
 		}
 
+		void delete_object();
 		entt::entity id() const { return m_id; }
 	private:
 		entt::entity m_id;

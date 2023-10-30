@@ -1,8 +1,6 @@
 #pragma once
 
-#include "game_engine.h"
-
-#include "renderer2D/orthographic_camera.h"
+#include "scene/scene.h"
 
 class test_scene : public game_engine::scene
 {
@@ -12,5 +10,5 @@ public:
 	
 	virtual void on_create() override;
 private:
-	
+	uint32_t texture;
 };

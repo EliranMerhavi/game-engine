@@ -1,29 +1,28 @@
 #pragma once
 
-#include "core/config.h"
 #include "entt/entt.hpp"
+#include "game_object.h"
+#include "game_engine.h"
 
 namespace game_engine
 {
-	void run(const config_t& config);
-	class game_object;
-
 	class scene
 	{
 	public:
+		scene();
+		~scene();
 		virtual void on_create() = 0;
 		game_object create_game_object();
-		
+		game_object create_game_object(const std::string& tag);
+		game_object get_game_object_by_tag(const std::string& tag);
+
 	private:
 		void render();
 		void update();
-	protected:
-		void set_primary_camera(const game_object& camera);
 	private:
 		entt::registry m_registry;
-		entt::entity m_camera_id;
-		friend void game_engine::run(const config_t& config);
-		friend class game_object;
+
+		friend void game_engine::run();
 	};
 }
 

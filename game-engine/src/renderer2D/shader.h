@@ -15,7 +15,9 @@ namespace opengl
 		void set_uniform_1i(const char* name, int value);
 		void set_uniform_4f(const char* name, const glm::f32vec4& vec);
 		void set_uniform_4f(const char* name, float v1, float v2, float v3, float v4);
+
 		void set_uniform_mat_4f(const char* name, const glm::mat4& mat);
+		void set_uniform_mat_3f(const char* name, const glm::mat3& mat);
 		void set_uniform_1iv(const char* name, size_t count, int* value);
 		int32_t get_uniform_location(const char* name);
 
