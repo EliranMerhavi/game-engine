@@ -1,20 +1,25 @@
 #define GLEW_STATIC
 #include "game_engine.h"
 #include "scenes/test_scene.h"
+#include "scene/game_object.h"
 #include <iostream>
+#include <bitset>
+
 
 
 int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
-	game_engine::application& application{ game_engine::application::instance() };
-	test_scene test;
 	
-	application.limitFPS() = 1.0f / 60.0f;
-	application.set_current_scene(test);
-	application.set_vsync(true);
-	application.run();
+	test_scene test;
+	config_t config;
 
-
+	config.limitFPS = 1.0f / 60.0f;
+	config.vsync = true;
+	
+	game_engine::init(config);
+	game_engine::set_scene(test);
+	game_engine::run();
+	
 	return 0;
 }

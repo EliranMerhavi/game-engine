@@ -1,42 +1,34 @@
 #pragma once
 
-#include <functional>
-#include <unordered_map>
-#include <type_traits>
-#include <string>
-#include "utils/typedefs.h"
-#include "scene/component.h"
+#include "ecs/components.h"
+#include "entt/entt.hpp"
 
 namespace game_engine
 {
-	class component;
-
 	class game_object
 	{
 	public:
+		game_object(const game_object&) = default;
+		game_object(entt::entity id, entt::registry& registry);
+		game_object(entt::registry& registry);
+		
 
-		game_object(const std::string& name);
-
-		void update(float delta_time);
-
-		void add_component(component& new_component);
-
-		template<typename T, std::enable_if<std::is_base_of<component, T>::type *= nullptr>>
-		T& get_component(id_t id)
+		template<typename T, typename... args_t>
+		void add(args_t... args)
 		{
-			return *static_cast<T*>(&m_components[id]);
+			m_registry.emplace<T>(m_id, std::forward<args_t>(args)...);
 		}
 
-		void remove_component(id_t id);
+		template<typename T>
+		T& get() const
+		{
+			return m_registry.get<T>(m_id);
+		}
 
-		void start();
-		void destroy();
-		bool is_dead();
-
+		void delete_object();
+		entt::entity id() const { return m_id; }
 	private:
-
-		std::string m_name;
-		bool m_is_dead;
-		std::unordered_map<id_t, component&> m_components;
+		entt::entity m_id;
+		entt::registry& m_registry;
 	};
 }

@@ -1,4 +1,4 @@
 #include"pch.h"
 #include "time.h"
 
-float time::delta_time = 0;
+float time::s_delta_time = 0.0f;
