@@ -9,7 +9,7 @@ namespace component
 	public:
 		using render_function = std::function<void()>;
 		render_callback(const render_function& callback);
-		void render();
+		void render() const;
 	private:
 		render_function m_callback;
 	};

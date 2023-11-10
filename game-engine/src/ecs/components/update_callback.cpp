@@ -5,7 +5,7 @@ component::update_callback::update_callback(const update_function& callback) : m
 {
 }
 
-void component::update_callback::update()
+void component::update_callback::update() const
 {
 	m_callback();
 }

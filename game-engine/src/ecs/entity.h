@@ -3,5 +3,5 @@
 
 namespace ecs
 {
-	using entity_t = size_t;
+	enum class entity_t : size_t {};
 }

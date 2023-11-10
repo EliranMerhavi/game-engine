@@ -20,9 +20,13 @@ void test_scene::on_create()
 
 	game_engine::game_object obj1 = create_game_object("obj"); 
 	
-	obj1.get<component::transform>().set_position({ 250.0f, 250.0f });
-	obj1.get<component::transform>().set_scale({ 250.0f, 250.0f });
-	obj1.add<component::quad>();
+	obj1.get<component::transform>().set_transform({ 250.0f, 250.0f }, { 250.0f, 250.0f });
+
+	obj1.add<component::render_callback>([obj1] {
+		auto& transform = obj1.get<component::transform>();
+		renderer2D::line({ 0, 0 }, { 250, 250 });
+	});
+
 	obj1.add<component::update_callback>([obj1] {
 		auto& transform = obj1.get<component::transform>();
 		transform.set_rotation(fmod(transform.rotation() + time::delta_time(), 360));

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entt/entt.hpp"
+#include "ecs/registry.h"
 #include "game_object.h"
 #include "game_engine.h"
 
@@ -20,7 +20,7 @@ namespace game_engine
 		void render();
 		void update();
 	private:
-		entt::registry m_registry;
+		ecs::registry m_registry;
 
 		friend void game_engine::run();
 	};

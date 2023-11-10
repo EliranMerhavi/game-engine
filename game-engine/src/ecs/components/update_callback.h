@@ -9,7 +9,7 @@ namespace component
 	public:
 		using update_function = std::function<void()>;
 		update_callback(const update_function& callback);
-		void update();
+		void update() const;
 	private:
 		update_function m_callback;
 	};

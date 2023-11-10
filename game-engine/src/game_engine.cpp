@@ -3,6 +3,7 @@
 #include "core/config.h"
 #include "core/time.h"
 #include "scene/scene.h"
+#include "core/keyboard.h"
 
 #include "renderer2D/renderer2D.h"
 
@@ -13,17 +14,14 @@ namespace game_engine
     config_t config_data;
     scene* current_scene;
     GLFWwindow* window;
-
-    void on_window_close();
-}
-
-void game_engine::on_window_close()
-{
-    running = false;
 }
 
 void game_engine::init(const config_t& config)
 {
+    assert(config.starting_scene != nullptr);
+    assert(config.limitFPS >= 0);
+    assert(config.starting_width > 0 && config.starting_height > 0);
+    
     config_data = config;
     
     if (!glfwInit())
@@ -48,19 +46,21 @@ void game_engine::init(const config_t& config)
             (type == GL_DEBUG_TYPE_ERROR ? "[GL ERROR]" : ""),
             type, severity, message);
 
-    if (type == GL_DEBUG_TYPE_ERROR)
-    {
-        __debugbreak();
-    }
+            if (type == GL_DEBUG_TYPE_ERROR)
+            {
+                __debugbreak();
+            }
         }, 0);
 #endif
 
     glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
-        on_window_close();
+        running = false;
     });
 
+    keyboard::init(window);
     renderer2D::init();
     config::set_vsync(config_data.vsync);
+    set_scene(*config.starting_scene);
 }
 
 void game_engine::run()
@@ -88,14 +88,15 @@ void game_engine::run()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     renderer2D::shutdown();
     glfwTerminate();
 }
 
 void game_engine::set_scene(scene& scene)
 {
-    game_engine::current_scene = &scene;
-    game_engine::current_scene->on_create();
+    current_scene = &scene;
+    current_scene->on_create();
 }
 
 void game_engine::config::set_vsync(bool vsync)
@@ -107,4 +108,9 @@ void game_engine::config::set_vsync(bool vsync)
 void game_engine::config::set_limitFPS(float fps)
 {
     config_data.limitFPS = fps;
+}
+
+const config_t& game_engine::config::get_config()
+{
+    return config_data;
 }

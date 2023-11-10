@@ -12,6 +12,15 @@ component::transform::transform(const glm::f32vec2& position, const glm::f32vec2
 	update_cache();
 }
 
+void component::transform::set_transform(const glm::f32vec2& position, const glm::f32vec2& scale, float rotation)
+{
+	m_position = position;
+	m_scale = scale;
+	m_rotation = rotation;
+	update_cache();
+}
+
+
 void component::transform::set_position(const glm::f32vec2& position)
 {
 	m_position = position;
@@ -40,8 +49,8 @@ void component::transform::update_cache()
 	glm::f32mat4 transform(1.0f);
 
 	transform = glm::translate(transform, glm::f32vec3{ m_position, 0.0f });
-	transform = glm::scale(transform, glm::f32vec3{ m_scale, 1.0f });
 	transform = glm::rotate(transform, glm::radians(m_rotation), glm::f32vec3{ 0, 0, 1 });
+	transform = glm::scale(transform, glm::f32vec3{ m_scale, 1.0f });
 
 	m_cache = transform;
 }

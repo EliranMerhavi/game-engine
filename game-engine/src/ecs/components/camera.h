@@ -9,9 +9,10 @@ namespace component
 	{
 	public:
 		camera(float left, float right, float bottom, float top);
+		static void unselect_camera();
 		void select_camera();
+		bool is_selected() const;
 		const glm::f32mat4& projection() const;
-		static component::camera* current_camera();
 	private:
 		static component::camera* s_current_camera;
 		glm::f32mat4 m_projection;
