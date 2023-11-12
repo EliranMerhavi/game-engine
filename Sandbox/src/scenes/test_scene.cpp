@@ -3,6 +3,8 @@
 #include "scene/game_object.h"
 #include "ecs/components.h"
 #include "renderer2D/renderer2D_utils.h"
+#include "core/input.h"
+
 
 test_scene::test_scene()
 {
@@ -13,23 +15,35 @@ void test_scene::on_create()
 {
 	game_engine::game_object camera = create_game_object();
 
-	camera.add<component::camera>(0.0f, 500.0f, 500.0f, 0.0f);
+	camera.add<component::camera>(-200, 200, -200, 200);
 	camera.get<component::camera>().select_camera();
 	auto& camera_transform = camera.get<component::transform>();
 	camera_transform.set_scale(camera_transform.scale() - glm::f32vec2{ 0.5, 0.5 });
 
 	game_engine::game_object obj1 = create_game_object("obj"); 
 	
-	obj1.get<component::transform>().set_transform({ 250.0f, 250.0f }, { 250.0f, 250.0f });
+	obj1.get<component::transform>().set_transform({ 0, 0 }, { 50.0f, 50.0f });
 
-	obj1.add<component::render_callback>([obj1] {
-		auto& transform = obj1.get<component::transform>();
-		renderer2D::line({ 0, 0 }, { 250, 250 });
-	});
+	obj1.add<component::quad>(glm::f32vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
 
 	obj1.add<component::update_callback>([obj1] {
 		auto& transform = obj1.get<component::transform>();
-		transform.set_rotation(fmod(transform.rotation() + time::delta_time(), 360));
+		glm::f32vec2 update{ 0, 0 };
+
+		if (input::get_key_state(key::A) == key_state::PRESSED) {
+			update.x -= time::delta_time();
+		}
+		if (input::get_key_state(key::S) == key_state::PRESSED) {
+			update.y -= time::delta_time();
+		}
+		if (input::get_key_state(key::D) == key_state::PRESSED) {
+			update.x += time::delta_time();
+		}
+		if (input::get_key_state(key::W) == key_state::PRESSED) {
+			update.y += time::delta_time();
+		}
+
+		transform.set_position(transform.position() + update);
 	});	
 
 	game_engine::game_object obj2 = create_game_object();

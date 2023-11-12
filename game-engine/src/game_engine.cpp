@@ -3,7 +3,6 @@
 #include "core/config.h"
 #include "core/time.h"
 #include "scene/scene.h"
-#include "core/keyboard.h"
 
 #include "renderer2D/renderer2D.h"
 
@@ -13,7 +12,7 @@ namespace game_engine
     bool running;
     config_t config_data;
     scene* current_scene;
-    GLFWwindow* window;
+    GLFWwindow* glfw_window;
 }
 
 void game_engine::init(const config_t& config)
@@ -27,12 +26,12 @@ void game_engine::init(const config_t& config)
     if (!glfwInit())
         throw std::exception("error when calling glfwInit()");
 
-    window = glfwCreateWindow(config_data.starting_width, config_data.starting_height, config_data.window_title.c_str(), nullptr, nullptr);
+    glfw_window = glfwCreateWindow(config_data.starting_width, config_data.starting_height, config_data.window_title.c_str(), nullptr, nullptr);
 
     if (!window)
         throw std::exception("error on glfwCreateWindow()");
 
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(glfw_window);
 
     GLenum error = glewInit();
     if (error != GLEW_OK)
@@ -53,11 +52,10 @@ void game_engine::init(const config_t& config)
         }, 0);
 #endif
 
-    glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
+    glfwSetWindowCloseCallback(glfw_window, [](GLFWwindow* window) {
         running = false;
     });
 
-    keyboard::init(window);
     renderer2D::init();
     config::set_vsync(config_data.vsync);
     set_scene(*config.starting_scene);
@@ -85,7 +83,7 @@ void game_engine::run()
 
         current_scene->render();
         renderer2D::flush();
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
 
@@ -97,6 +95,11 @@ void game_engine::set_scene(scene& scene)
 {
     current_scene = &scene;
     current_scene->on_create();
+}
+
+GLFWwindow* game_engine::window()
+{
+    return glfw_window;
 }
 
 void game_engine::config::set_vsync(bool vsync)

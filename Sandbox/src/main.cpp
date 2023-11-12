@@ -5,7 +5,7 @@
 #include <iostream>
 #include <bitset>
 
-
+#include <queue>
 
 int main(int argc, const char** argv)
 {

@@ -2,6 +2,8 @@
 
 #include "core/config.h"
 
+struct GLFWwindow;
+
 namespace game_engine
 {
 	class scene;
@@ -9,11 +11,13 @@ namespace game_engine
 	void init(const config_t& config={});
 	void run();
 	void set_scene(scene& scene);
-	
+	GLFWwindow* window();
+
 	namespace config
 	{
 		void set_vsync(bool vsync);
 		void set_limitFPS(float fps);
 		const config_t& get_config();
+		
 	}
 }
