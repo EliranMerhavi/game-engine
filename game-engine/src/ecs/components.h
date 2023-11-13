@@ -7,3 +7,4 @@
 #include "components/tag.h"
 #include "components/quad.h"
 #include "components/circle.h"
+#include "components/rigidBody.h"
