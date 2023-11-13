@@ -3,6 +3,7 @@
 #include "ecs/registry.h"
 #include "game_object.h"
 #include "game_engine.h"
+#include "physics2D/phsyics.h"
 
 namespace game_engine
 {
@@ -21,6 +22,7 @@ namespace game_engine
 		void update();
 	private:
 		ecs::registry m_registry;
+		phsyics2D_system system;
 
 		friend void game_engine::run();
 	};

@@ -6,8 +6,8 @@ namespace circCollisions {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();
 
-        float rA = objA.scale().x;
-        float rB = objB.scale().x;
+        float rA = objA.scale().x / 2;
+        float rB = objB.scale().x / 2;
         glm::f32vec2 posA = objA.position();
         glm::f32vec2 posB = objB.position();
 
@@ -37,8 +37,8 @@ namespace circCollisions {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();
 
-        float rA = objA.scale().x;
-        float rB = objB.scale().x;
+        float rA = objA.scale().x / 2;
+        float rB = objB.scale().x / 2;
         glm::f32vec2 posA = objA.position();
         glm::f32vec2 posB = objB.position();
 

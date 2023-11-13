@@ -5,7 +5,7 @@
 #include "renderer2D/renderer2D.h"
 
 
-game_engine::scene::scene()
+game_engine::scene::scene() : m_registry(), system(m_registry)
 {
 	auto main_camera = create_game_object();
 	main_camera.add<component::camera>(-0.5f, 0.5f, -0.5f, 0.5f);
@@ -80,4 +80,5 @@ void game_engine::scene::update()
 	for (const auto& callback : m_registry.pool<component::update_callback>().data()) {
 		callback.update();
 	}
+	system.update();
 }

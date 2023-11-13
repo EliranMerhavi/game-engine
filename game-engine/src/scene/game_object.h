@@ -13,6 +13,11 @@ namespace game_engine
 		game_object(ecs::entity_t id, ecs::registry& registry);
 		game_object(ecs::registry& registry);
 		
+		template<typename T>
+		bool has() const
+		{
+			return m_registry.has<T>(m_id);
+		}
 
 		template<typename T, typename... args_t>
 		void add(args_t... args)
@@ -26,7 +31,6 @@ namespace game_engine
 			return m_registry.get<T>(m_id);
 		}
 
-		void delete_object();
 		ecs::entity_t id() const { return m_id; }
 	private:
 		ecs::entity_t m_id;
