@@ -10,6 +10,8 @@ namespace component
 		transform();
 		transform(const glm::f32vec2& position, const glm::f32vec2& scale, float rotation);
 
+		void set_transform(const glm::f32vec2& position, const glm::f32vec2& scale, float rotation=0.0f);
+
 		void set_position(const glm::f32vec2& position);
 		void set_scale(const glm::f32vec2& scale);
 		void set_rotation(float rotation);

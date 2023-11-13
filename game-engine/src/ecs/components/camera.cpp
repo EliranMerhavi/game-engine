@@ -9,6 +9,11 @@ component::camera::camera(float left, float right, float bottom, float top)
 {
 }
 
+void component::camera::unselect_camera()
+{
+    s_current_camera = nullptr;
+}
+
 void component::camera::select_camera()
 {
     s_current_camera = this;
@@ -19,7 +24,7 @@ const glm::f32mat4& component::camera::projection() const
     return m_projection;
 }
 
-component::camera* component::camera::current_camera()
+bool component::camera::is_selected() const
 {
-    return s_current_camera;
+    return s_current_camera == this;
 }

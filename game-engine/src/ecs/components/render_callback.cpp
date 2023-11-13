@@ -5,7 +5,7 @@ component::render_callback::render_callback(const render_function& callback) : m
 {
 }
 
-void component::render_callback::render()
+void component::render_callback::render() const
 {
 	m_callback();
 }

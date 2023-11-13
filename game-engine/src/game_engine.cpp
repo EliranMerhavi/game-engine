@@ -12,29 +12,26 @@ namespace game_engine
     bool running;
     config_t config_data;
     scene* current_scene;
-    GLFWwindow* window;
-
-    void on_window_close();
-}
-
-void game_engine::on_window_close()
-{
-    running = false;
+    GLFWwindow* glfw_window;
 }
 
 void game_engine::init(const config_t& config)
 {
+    assert(config.starting_scene != nullptr);
+    assert(config.limitFPS >= 0);
+    assert(config.starting_width > 0 && config.starting_height > 0);
+    
     config_data = config;
     
     if (!glfwInit())
         throw std::exception("error when calling glfwInit()");
 
-    window = glfwCreateWindow(config_data.starting_width, config_data.starting_height, config_data.window_title.c_str(), nullptr, nullptr);
+    glfw_window = glfwCreateWindow(config_data.starting_width, config_data.starting_height, config_data.window_title.c_str(), nullptr, nullptr);
 
     if (!window)
         throw std::exception("error on glfwCreateWindow()");
 
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(glfw_window);
 
     GLenum error = glewInit();
     if (error != GLEW_OK)
@@ -48,19 +45,20 @@ void game_engine::init(const config_t& config)
             (type == GL_DEBUG_TYPE_ERROR ? "[GL ERROR]" : ""),
             type, severity, message);
 
-    if (type == GL_DEBUG_TYPE_ERROR)
-    {
-        __debugbreak();
-    }
+            if (type == GL_DEBUG_TYPE_ERROR)
+            {
+                __debugbreak();
+            }
         }, 0);
 #endif
 
-    glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
-        on_window_close();
+    glfwSetWindowCloseCallback(glfw_window, [](GLFWwindow* window) {
+        running = false;
     });
 
     renderer2D::init();
     config::set_vsync(config_data.vsync);
+    set_scene(*config.starting_scene);
 }
 
 void game_engine::run()
@@ -85,17 +83,23 @@ void game_engine::run()
 
         current_scene->render();
         renderer2D::flush();
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
+
     renderer2D::shutdown();
     glfwTerminate();
 }
 
 void game_engine::set_scene(scene& scene)
 {
-    game_engine::current_scene = &scene;
-    game_engine::current_scene->on_create();
+    current_scene = &scene;
+    current_scene->on_create();
+}
+
+GLFWwindow* game_engine::window()
+{
+    return glfw_window;
 }
 
 void game_engine::config::set_vsync(bool vsync)
@@ -107,4 +111,9 @@ void game_engine::config::set_vsync(bool vsync)
 void game_engine::config::set_limitFPS(float fps)
 {
     config_data.limitFPS = fps;
+}
+
+const config_t& game_engine::config::get_config()
+{
+    return config_data;
 }

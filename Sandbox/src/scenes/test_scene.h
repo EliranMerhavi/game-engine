@@ -10,5 +10,4 @@ public:
 	
 	virtual void on_create() override;
 private:
-	uint32_t texture;
 };

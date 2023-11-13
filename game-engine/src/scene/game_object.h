@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ecs/components.h"
-#include "entt/entt.hpp"
+#include "ecs/registry.h"
+#include "ecs/entity.h"
 
 namespace game_engine
 {
@@ -9,8 +10,8 @@ namespace game_engine
 	{
 	public:
 		game_object(const game_object&) = default;
-		game_object(entt::entity id, entt::registry& registry);
-		game_object(entt::registry& registry);
+		game_object(ecs::entity_t id, ecs::registry& registry);
+		game_object(ecs::registry& registry);
 		
 
 		template<typename T, typename... args_t>
@@ -26,9 +27,9 @@ namespace game_engine
 		}
 
 		void delete_object();
-		entt::entity id() const { return m_id; }
+		ecs::entity_t id() const { return m_id; }
 	private:
-		entt::entity m_id;
-		entt::registry& m_registry;
+		ecs::entity_t m_id;
+		ecs::registry& m_registry;
 	};
 }

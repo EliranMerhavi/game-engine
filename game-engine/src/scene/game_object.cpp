@@ -2,7 +2,7 @@
 #include "game_object.h"
 
 
-game_engine::game_object::game_object(entt::registry& registry) : game_engine::game_object(registry.create(), registry)
+game_engine::game_object::game_object(ecs::registry& registry) : game_engine::game_object(registry.create(), registry)
 {
 }
 
@@ -10,9 +10,9 @@ game_engine::game_object::game_object(entt::registry& registry) : game_engine::g
 
 void game_engine::game_object::delete_object()
 {
-    m_registry.destroy(m_id);
+
 }
 
-game_engine::game_object::game_object(entt::entity id, entt::registry& registry) : m_id(id), m_registry(registry)
+game_engine::game_object::game_object(ecs::entity_t id, ecs::registry& registry) : m_id(id), m_registry(registry)
 {
 }

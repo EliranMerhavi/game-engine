@@ -14,7 +14,6 @@ game_engine::scene::scene()
 
 game_engine::scene::~scene()
 {
-	m_registry.clear();
 }
 
 game_engine::game_object game_engine::scene::create_game_object()
@@ -33,7 +32,7 @@ game_engine::game_object game_engine::scene::create_game_object(const std::strin
 
 game_engine::game_object game_engine::scene::get_game_object_by_tag(const std::string& tag)
 {
-	for (auto entity : m_registry.view<component::tag>()) {
+	for (auto entity : m_registry.pool<component::tag>().entities()) {
 		if (m_registry.get<component::tag>(entity).str() == tag) {
 			return game_engine::game_object(entity, m_registry);
 		}
@@ -45,39 +44,40 @@ game_engine::game_object game_engine::scene::get_game_object_by_tag(const std::s
 
 void game_engine::scene::render()
 {
-	if (component::camera::current_camera()) 
+	for (auto entity : m_registry.pool<component::camera>().entities())
 	{
-		for (auto entity : m_registry.view<component::camera>())
+		auto& camera = m_registry.get<component::camera>(entity);
+		if (camera.is_selected()) 
 		{
-			auto& camera = m_registry.get<component::camera>(entity);
-			if (&camera == component::camera::current_camera()) 
-			{
-				auto& transform = m_registry.get<component::transform>(entity);
-				auto view = glm::inverse(transform.matrix());
-				renderer2D::set_camera(camera.projection() * view);
-				break;
-			}
+			auto& transform = m_registry.get<component::transform>(entity);
+			auto view = glm::inverse(transform.matrix());
+			renderer2D::set_camera(camera.projection() * view);
+			break;
 		}
 	}
-
-	m_registry.view<component::transform, component::quad>().each([](const entt::entity entity, component::transform& transform, component::quad& quad) {
+	
+	for (ecs::entity_t entity : m_registry.pool<component::quad>().entities()) {
+		auto& transform = m_registry.get<component::transform>(entity);
+		auto& quad = m_registry.get<component::quad>(entity);
 		renderer2D::set_color(quad.color());
-		renderer2D::quad(transform.matrix());
-	});
+		renderer2D::circle(transform.matrix());
+	}
 
-	m_registry.view<component::transform, component::circle>().each([](const entt::entity entity, component::transform& transform, component::circle& circle) {
+	for (ecs::entity_t entity : m_registry.pool<component::circle>().entities()) {
+		auto& transform = m_registry.get<component::transform>(entity);
+		auto& circle = m_registry.get<component::circle>(entity);
 		renderer2D::set_color(circle.color());
 		renderer2D::circle(transform.matrix());
-	});
+	}
 
-	m_registry.view<component::render_callback>().each([](component::render_callback& callback) {
+	for (const auto& callback : m_registry.pool<component::render_callback>().data()) {
 		callback.render();
-	});
+	}
 }
 
 void game_engine::scene::update()
 {
-	m_registry.view<component::update_callback>().each([](component::update_callback& callback) {
+	for (const auto& callback : m_registry.pool<component::update_callback>().data()) {
 		callback.update();
-	});
+	}
 }

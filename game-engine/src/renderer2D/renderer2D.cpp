@@ -14,6 +14,11 @@ namespace renderer2D
 		glm::f32vec2 local_position;
 	};
 
+	struct line_vertex {
+		glm::f32vec4 position;
+		float color[4];
+	};
+
 	struct quad_vertex {
 		glm::f32vec4 position;
 		float color[4];
@@ -118,17 +123,18 @@ void renderer2D::init()
 	// ------------------------------------------
 	// initialization of the line vao
 	// ------------------------------------------
-	//glCreateVertexArrays(1, &line_vao);
-	//glCreateBuffers(1, &line_vbo);
-	//glBindVertexArray(line_vao);
-	//
-	//glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
-	//glBufferData(GL_ARRAY_BUFFER, max_lines_vertices * sizeof(vertex), nullptr, GL_DYNAMIC_DRAW);
-	//
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(0, sizeof(vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex) / sizeof(float), 0);
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, sizeof(vertex::color) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(vertex) / sizeof(float), (const void*)offsetof(vertex, color));
+	
+	glCreateVertexArrays(1, &line_vao);
+	glCreateBuffers(1, &line_vbo);
+	glBindVertexArray(line_vao);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
+	glBufferData(GL_ARRAY_BUFFER, max_lines_vertices * sizeof(line_vertex), nullptr, GL_DYNAMIC_DRAW);
+	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, sizeof(line_vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(line_vertex), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, sizeof(line_vertex::color) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(line_vertex), (const void*)offsetof(line_vertex, color));
 
 
 	// ------------------------------------------
@@ -160,10 +166,10 @@ void renderer2D::init()
 	s_quad_vertices[2] = glm::f32vec4{  0.5f,  0.5f, 0.0f, 1.0f };
 	s_quad_vertices[3] = glm::f32vec4{  0.5f, -0.5f, 0.0f, 1.0f };
 	
-	s_tex_coords[0] = glm::f32vec2(1.0f, 1.0f);
-	s_tex_coords[1] = glm::f32vec2(1.0f, 0.0f);
-	s_tex_coords[2] = glm::f32vec2(0.0f, 0.0f);
-	s_tex_coords[3] = glm::f32vec2(0.0f, 1.0f);
+	s_tex_coords[0] = glm::f32vec2{ 1.0f, 1.0f };
+	s_tex_coords[1] = glm::f32vec2{ 1.0f, 0.0f };
+	s_tex_coords[2] = glm::f32vec2{ 0.0f, 0.0f };
+	s_tex_coords[3] = glm::f32vec2{ 0.0f, 1.0f };
 	
 	uint32_t data = 0xFFFFFFFF;
 	renderer2D::create_texture(white_texture, (uint8_t*)&data, 1, 1);
@@ -232,17 +238,17 @@ void renderer2D::circle(const glm::f32mat4& transform)
 
 void renderer2D::line(const glm::f32vec2& from, const glm::f32vec2& to)
 {
-	//if (lines_count == max_lines_count)
-	//	flush();
-	//
-	//vertex vertices[] = {
-	//	{{from, 0.0f, 1.0f}, _color.r, _color.g, _color.b, _color.a},
-	//	{{to, 0.0f, 1.0f},   _color.r, _color.g, _color.b, _color.a}
-	//};
-	//
-	//glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
-	//glBufferSubData(GL_ARRAY_BUFFER, lines_count * 2 * sizeof(vertex), sizeof(vertices), vertices);
-	//lines_count++;
+	if (lines_count == max_lines_count)
+		flush();
+	
+	line_vertex vertices[] = {
+		{{from, 0.0f, 1.0f}, _color.r, _color.g, _color.b, _color.a},
+		{{to, 0.0f, 1.0f},   _color.r, _color.g, _color.b, _color.a}
+	};
+	
+	glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, lines_count * 2 * sizeof(line_vertex), sizeof(vertices), vertices);
+	lines_count++;
 }
 
 void renderer2D::rotated_quad(float x, float y, float w, float h, float degrees)
@@ -382,7 +388,6 @@ void renderer2D::flush()
 		glDrawElements(GL_TRIANGLES, circle_count * 6, GL_UNSIGNED_INT, nullptr);
 		circle_count = 0;
 	}
-	
 }
 
 void renderer2D::clear()
