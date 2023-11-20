@@ -3,7 +3,7 @@
 #include "core/config.h"
 #include "core/time.h"
 #include "scene/scene.h"
-
+#include "core/input.h"
 #include "renderer2D/renderer2D.h"
 
 
@@ -56,6 +56,7 @@ void game_engine::init(const config_t& config)
         running = false;
     });
 
+    input::init();
     renderer2D::init();
     config::set_vsync(config_data.vsync);
     set_scene(*config.starting_scene);

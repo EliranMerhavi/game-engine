@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "circCollisions.h"
+#include "ecs/components.h"
+
 namespace circCollisions {
     bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
     {
@@ -63,10 +65,19 @@ namespace circCollisions {
         // Now for the collision itself
         auto& physA = A.get<component::rigidBody>();
         auto& physB = B.get<component::rigidBody>();
-
-        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass, 1 / physB.mass);
+        
+        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass + 1 / physB.mass);
         physA.velocity = physA.velocity + j / physA.mass * normal;
         physB.velocity = physB.velocity - j / physB.mass * normal;
+
+
+        if (A.has<component::collider_callback>()) {
+            A.get<component::collider_callback>().on_collision(B);
+        }
+        if (B.has<component::collider_callback>()) {
+            B.get<component::collider_callback>().on_collision(A);
+        }
+
         return true;
     }
 }

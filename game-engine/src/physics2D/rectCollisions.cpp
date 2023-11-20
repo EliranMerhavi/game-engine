@@ -2,6 +2,7 @@
 #include "rectCollisions.h"
 #include "scene/game_object.h"
 #include <limits>
+#include "ecs/components.h"
 namespace rectCollisions {
     bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
     {

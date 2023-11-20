@@ -14,7 +14,6 @@ namespace component {
         float moment;
 
         void intialize(float m, float om,glm::f32vec2 vel, std::string type);
-
     };
 }
 

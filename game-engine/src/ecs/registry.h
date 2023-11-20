@@ -1,11 +1,10 @@
 #pragma once
-#include "entity.h"
+
 #include <assert.h>
-#include <tuple>
-#include <vector>
 #include <any>
 #include <unordered_map>
 
+#include "entity.h"
 #include "components_pool.h"
 
 namespace ecs
