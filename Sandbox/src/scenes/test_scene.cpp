@@ -15,10 +15,6 @@ void test_scene::on_create()
 
 }
 
-
-
-
-
 test_scene::~test_scene()
 {
 }

@@ -97,17 +97,6 @@ namespace rectCircCollisions {
 			returnDepth = depth;
 			normal = edge;
 		}
-
-		// Rectt this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-		if (glm::dot(normal, posRect - posCirc) > 0) {
-			rect.set_position(posRect + returnDepth / 2 * normal);
-			circ.set_position(posCirc - returnDepth / 2 * normal);
-		}
-		else {
-			rect.set_position(posRect - returnDepth / 2 * normal);
-			circ.set_position(posCirc + returnDepth / 2 * normal);
-		}
-
 		return true;
 	}
 
@@ -222,7 +211,7 @@ namespace rectCircCollisions {
 		auto& physA = A.get<component::rigidBody>();
 		auto& physB = B.get<component::rigidBody>();
 	
-		float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass, 1 / physB.mass);
+		float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass + 1 / physB.mass);
 		physA.velocity = physA.velocity + j / physA.mass * normal;
 		physB.velocity = physB.velocity - j / physB.mass * normal;
 		return true;

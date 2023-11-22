@@ -94,18 +94,6 @@ namespace rectCollisions {
             }
         }
 
-        normal = normal / glm::length(normal);
-
-        // At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-        if (glm::dot(normal, posA - posB) > 0) {
-            objA.set_position(posA + returnDepth / 2 * normal);
-            objB.set_position(posB - returnDepth / 2 * normal);
-        }
-        else {
-            objA.set_position(posA - returnDepth / 2 * normal);
-            objB.set_position(posB + returnDepth / 2 * normal);
-        }
-
         return true;
     }
 
@@ -213,7 +201,7 @@ namespace rectCollisions {
         auto& physA = A.get<component::rigidBody>();
         auto& physB = B.get<component::rigidBody>();
         // Once we've seperated, we can go about the collision resolution
-        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass, 1 / physB.mass);
+        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass + 1 / physB.mass);
         physA.velocity = physA.velocity + j / physA.mass * normal;
         physB.velocity = physB.velocity - j / physB.mass * normal;
         return true;
