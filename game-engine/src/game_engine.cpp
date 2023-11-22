@@ -19,14 +19,14 @@ void game_engine::init(const config_t& config)
 {
     assert(config.starting_scene != nullptr);
     assert(config.limitFPS >= 0);
-    assert(config.starting_width > 0 && config.starting_height > 0);
+    assert(config.width > 0 && config.height > 0);
     
     config_data = config;
     
     if (!glfwInit())
         throw std::exception("error when calling glfwInit()");
 
-    glfw_window = glfwCreateWindow(config_data.starting_width, config_data.starting_height, config_data.window_title.c_str(), nullptr, nullptr);
+    glfw_window = glfwCreateWindow(config_data.width, config_data.height, config_data.window_title.c_str(), nullptr, nullptr);
 
     if (!window)
         throw std::exception("error on glfwCreateWindow()");
@@ -101,6 +101,16 @@ void game_engine::set_scene(scene& scene)
 GLFWwindow* game_engine::window()
 {
     return glfw_window;
+}
+
+int game_engine::config::window_width()
+{
+    return config_data.width;
+}
+
+int game_engine::config::window_height()
+{
+    return config_data.height;
 }
 
 void game_engine::config::set_vsync(bool vsync)

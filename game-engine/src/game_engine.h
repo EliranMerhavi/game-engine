@@ -15,9 +15,10 @@ namespace game_engine
 
 	namespace config
 	{
+		int window_width();
+		int window_height();
 		void set_vsync(bool vsync);
 		void set_limitFPS(float fps);
-		const config_t& get_config();
-		
+		const config_t& get_config();		
 	}
 }

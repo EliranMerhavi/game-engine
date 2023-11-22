@@ -16,7 +16,7 @@ struct config_t
 	float limitFPS = 0.0f;
 
 	std::string window_title = "default";
-	int starting_width = 500;
-	int starting_height = 500;
+	int width = 500;
+	int height = 500;
 	game_engine::scene* starting_scene = nullptr;
 };

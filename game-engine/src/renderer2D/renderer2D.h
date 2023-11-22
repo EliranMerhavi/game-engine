@@ -10,7 +10,6 @@ namespace renderer2D
 	bool has_initialized();
 	void shutdown();
 
-	
 	void set_camera(const glm::f32mat4& camera);
 	void set_color(const glm::f32vec4& color);
 	void set_color(float r, float g, float b, float a);
@@ -29,12 +28,13 @@ namespace renderer2D
 	void quad(const glm::f32mat4& transform);
 
 	
-	void texture(uint32_t tex_index, float x, float y, float w, float h);
-	void texture(uint32_t tex_index, const glm::f32vec2& position, const glm::f32vec2& dimensions);
-	void texture(uint32_t tex_index, const glm::f32mat4& transform);
+	void texture(uint32_t tex_id, float x, float y, float w, float h);
+	void texture(uint32_t tex_id, const glm::f32vec2& position, const glm::f32vec2& dimensions);
+	void texture(uint32_t tex_id, const glm::f32mat4& transform);
 
-	void create_texture(uint32_t& texture, uint8_t* data, int width, int height);
-	void free_texture(uint32_t texture);
+	void create_texture(uint32_t& tex_id, uint8_t* data, int width, int height);
+	void free_texture(uint32_t tex_id);
+
 	void flush();
 	void clear();
 }

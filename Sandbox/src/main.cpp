@@ -15,7 +15,7 @@ int main(int argc, const char** argv)
 	config_t config;
 
 	config.limitFPS = 1.0f / 60.0f;
-	config.vsync = true;
+	config.vsync = false;
 	config.starting_scene = new test_scene();
 
 	game_engine::init(config);

@@ -12,3 +12,4 @@
 
 #include "components/quad.h"
 #include "components/circle.h"
+#include "components/texture.h"
