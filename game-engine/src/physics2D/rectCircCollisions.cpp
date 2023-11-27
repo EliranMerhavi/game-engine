@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "rectCircCollisions.h"
-#include "ecs/components.h"
+#include "scene/components.h"
 namespace rectCircCollisions {
 	bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
 	{

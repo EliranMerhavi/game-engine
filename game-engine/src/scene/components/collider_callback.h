@@ -8,10 +8,11 @@ namespace component
 	{
 		using collider_function = void(*)(game_engine::game_object& obj, game_engine::game_object& collided);
 	public:
-		collider_callback(game_engine::game_object obj, const collider_function& callback);
-		void on_collision(game_engine::game_object& other) const;
+		collider_callback() = default;
+		collider_callback(const collider_callback& other) = default;
+		collider_callback(const collider_function& callback);
+		void on_collision(game_engine::game_object& obj, game_engine::game_object& other) const;
 	private:
 		collider_function m_callback;
-		mutable game_engine::game_object m_obj;
 	};
 }

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "scene.h"
 
-#include "ecs/components.h"
+#include "scene/components.h"
 
 #include "renderer2D/renderer2D.h"
 #include "physics2D/phsyics.h"
@@ -101,25 +101,23 @@ void game_engine::scene::update()
 
 void game_engine::scene::calculate_camera_matrix()
 {
-	if (m_camera_id != (ecs::entity_t)-1 && m_registry.get<component::camera>(m_camera_id).is_selected()) {
-		return;
-	}
-
-	for (auto entity : m_registry.pool<component::camera>().entities())
+	if (m_camera_id == (ecs::entity_t)-1 || !m_registry.get<component::camera>(m_camera_id).is_selected()) 
 	{
-		auto& camera = m_registry.get<component::camera>(entity);
-		if (camera.is_selected())
+		for (auto entity : m_registry.pool<component::camera>().entities())
 		{
-			m_camera_id = entity;
-			break;
+			auto& camera = m_registry.get<component::camera>(entity);
+			if (camera.is_selected())
+			{
+				m_camera_id = entity;
+				break;
+			}
 		}
 	}
 
-	assert(m_registry.get<component::camera>(m_camera_id).is_selected()); // there is no camera
+	assert(m_camera_id != (ecs::entity_t)-1 && m_registry.get<component::camera>(m_camera_id).is_selected()); // there is no camera
 	
 	auto& transform = m_registry.get<component::transform>(m_camera_id);
 	auto& camera = m_registry.get<component::camera>(m_camera_id);
-	auto view = glm::inverse(transform.matrix());
 
-	m_camera_matrix = camera.projection() * view;
+	m_camera_matrix = camera.projection() * glm::inverse(transform.matrix());
 }

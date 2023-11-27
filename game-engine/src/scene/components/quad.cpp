@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "quad.h"
 
-component::quad::quad() : component::quad::quad({1, 1, 1, 1})
+component::quad::quad() : component::quad::quad({0, 0, 0, 1})
 {
 }
 

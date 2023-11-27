@@ -17,12 +17,7 @@ namespace ecs
 		{
 		}
 
-		ecs::entity_t create()
-		{
-			ecs::entity_t entity = m_entity_counter;
-			m_entity_counter = (ecs::entity_t)(((size_t)m_entity_counter + 1) % SIZE_MAX);
-			return entity;
-		}
+		ecs::entity_t create();
 
 		template<typename component_t>
 		bool has(ecs::entity_t entity) const

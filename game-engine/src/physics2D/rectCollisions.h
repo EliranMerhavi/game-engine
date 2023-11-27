@@ -1,5 +1,5 @@
 #pragma once
-#include "ecs/components/quad.h"
+#include "scene/components/quad.h"
 #include "pch.h"
 #include "scene/game_object.h"
 #include <limits>

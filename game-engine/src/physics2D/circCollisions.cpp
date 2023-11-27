@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "circCollisions.h"
-#include "ecs/components.h"
+#include "scene/components.h"
 
 namespace circCollisions {
     bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
@@ -72,10 +72,10 @@ namespace circCollisions {
 
 
         if (A.has<component::collider_callback>()) {
-            A.get<component::collider_callback>().on_collision(B);
+            A.get<component::collider_callback>().on_collision(A, B);
         }
         if (B.has<component::collider_callback>()) {
-            B.get<component::collider_callback>().on_collision(A);
+            B.get<component::collider_callback>().on_collision(B, A);
         }
 
         return true;

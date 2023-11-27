@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "phsyics.h"
-#include "ecs/components.h"
+#include "scene/components.h"
 #include "scene/scene.h"
 #include "circCollisions.h"
 
