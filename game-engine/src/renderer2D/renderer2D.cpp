@@ -27,16 +27,16 @@ namespace renderer2D
 	};
 
 	const size_t max_tex_count{ 32 };
-	const size_t max_quads_count{ 1000 };
+	const size_t max_quads_count{ 20000 };
 	const size_t max_quads_vertices{ max_quads_count * 4 };
 	const size_t max_quads_indices{ max_quads_count * 6 };
 	
 	
-	const size_t max_lines_count{ 1000 };
+	const size_t max_lines_count{ 20000 };
 	const size_t max_lines_vertices{ max_lines_count * 2 };
 	const size_t max_lines_indices{ max_lines_count * 2 };
 
-	const size_t max_circles_count{ 1000 };
+	const size_t max_circles_count{ 20000 };
 	const size_t max_circles_vertices{ max_quads_count * 4 };
 	const size_t max_circles_indices{ max_quads_count * 6 };
 
@@ -50,9 +50,10 @@ namespace renderer2D
 			 line_vbo, line_vao;
 	
 	glm::f32vec4 s_quad_vertices[4];
-	glm::f32vec2 s_tex_coords[4];
+	texture_coords_t s_texture_coords;
 	uint32_t s_textures[32];
-#define WHITE_TEXTURE s_textures[0]
+	texture_t s_white_texture;
+
 }
 
 void renderer2D::set_camera(const glm::f32mat4& camera)
@@ -166,18 +167,22 @@ void renderer2D::init()
 	s_quad_vertices[2] = glm::f32vec4{  0.5f,  0.5f, 0.0f, 1.0f };
 	s_quad_vertices[3] = glm::f32vec4{  0.5f, -0.5f, 0.0f, 1.0f };
 	
-	s_tex_coords[0] = glm::f32vec2{ 1.0f, 1.0f };
-	s_tex_coords[1] = glm::f32vec2{ 1.0f, 0.0f };
-	s_tex_coords[2] = glm::f32vec2{ 0.0f, 0.0f };
-	s_tex_coords[3] = glm::f32vec2{ 0.0f, 1.0f };
+	s_texture_coords[0] = glm::f32vec2{ 1.0f, 1.0f };
+	s_texture_coords[1] = glm::f32vec2{ 1.0f, 0.0f };
+	s_texture_coords[2] = glm::f32vec2{ 0.0f, 0.0f };
+	s_texture_coords[3] = glm::f32vec2{ 0.0f, 1.0f };
 	
 	quad_shader->bind();
 
-	uint32_t data = 0xFFFFFFFF;
-	renderer2D::create_texture(WHITE_TEXTURE, (uint8_t*)&data, 1, 1);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, WHITE_TEXTURE);
+	s_white_texture.m_is_parent = true;
+	s_white_texture.m_is_deleted = new bool(false);
+	s_white_texture.m_dimensions = { 1, 1 };
+	s_white_texture.m_coords = default_texture_coords();
 
+	uint32_t data = 0xFFFFFFFF;
+	renderer2D::create_texture(s_white_texture.m_renderer_id, (uint8_t*)&data, 1, 1);
+	glBindTextureUnit(0, s_white_texture.id());
+	
 	delete[] samplers;
 	delete[] indices;
 	is_initialized = true;
@@ -201,7 +206,7 @@ void renderer2D::shutdown()
 	glDeleteVertexArrays(1, &line_vao);
 	glDeleteVertexArrays(1, &circle_vao);
 
-	renderer2D::free_texture(WHITE_TEXTURE);
+	s_white_texture.delete_texture();
 }
 
 void renderer2D::set_color(float r, float g, float b, float a)
@@ -226,14 +231,19 @@ void renderer2D::circle(float x, float y, float radius)
 
 void renderer2D::circle(const glm::f32mat4& transform)
 {
+	circle(transform, _color);
+}
+
+void renderer2D::circle(const glm::f32mat4& transform, const glm::f32vec4& color)
+{
 	if (circle_count == max_circles_count)
 		flush();
 
 	circle_vertex vertices[] = {
-		{transform * s_quad_vertices[0], _color.r, _color.g, _color.b, _color.a, s_quad_vertices[0]},
-		{transform * s_quad_vertices[1], _color.r, _color.g, _color.b, _color.a, s_quad_vertices[1]},
-		{transform * s_quad_vertices[2], _color.r, _color.g, _color.b, _color.a, s_quad_vertices[2]},
-		{transform * s_quad_vertices[3], _color.r, _color.g, _color.b, _color.a, s_quad_vertices[3]}
+		{transform * s_quad_vertices[0], color.r, color.g, color.b, color.a, s_quad_vertices[0]},
+		{transform * s_quad_vertices[1], color.r, color.g, color.b, color.a, s_quad_vertices[1]},
+		{transform * s_quad_vertices[2], color.r, color.g, color.b, color.a, s_quad_vertices[2]},
+		{transform * s_quad_vertices[3], color.r, color.g, color.b, color.a, s_quad_vertices[3]}
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, circle_vbo);
@@ -294,37 +304,10 @@ void renderer2D::quad(const glm::f32vec2& position, const glm::f32vec2& dimensio
 
 void renderer2D::quad(const glm::f32mat4& transform)
 {
-	if (quads_count == max_quads_count)
-		flush();
-
-	quad_vertex vertices[] = {
-		{transform * s_quad_vertices[0], _color.r, _color.g, _color.b, _color.a, s_tex_coords[0], 0},
-		{transform * s_quad_vertices[1], _color.r, _color.g, _color.b, _color.a, s_tex_coords[1], 0},
-		{transform * s_quad_vertices[2], _color.r, _color.g, _color.b, _color.a, s_tex_coords[2], 0},
-		{transform * s_quad_vertices[3], _color.r, _color.g, _color.b, _color.a, s_tex_coords[3], 0}
-	};
-
-	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-	glBufferSubData(GL_ARRAY_BUFFER, quads_count * 4 * sizeof(quad_vertex), sizeof(vertices), vertices);
-	quads_count++;
+	renderer2D::quad(transform, _color, white_texture().id(), default_texture_coords());
 }
 
-void renderer2D::texture(uint32_t tex_id, float x, float y, float w, float h)
-{	
-	renderer2D::texture(tex_id, { x, y }, { w, h });
-}
-
-void renderer2D::texture(uint32_t tex_id, const glm::f32vec2& position, const glm::f32vec2& dimensions)
-{
-	glm::f32mat4 transform(1.0f);
-
-	transform = glm::translate(transform, glm::f32vec3(position, 0.0f));
-	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
-
-	renderer2D::texture(tex_id, transform);
-}
-
-void renderer2D::texture(uint32_t tex_id, const glm::f32mat4& transform)
+void renderer2D::quad(const glm::f32mat4& transform, const glm::f32vec4& color, uint32_t tex_id, const std::array<glm::f32vec2, 4>& tex_coords)
 {
 	if (quads_count == max_quads_count || tex_count == max_tex_count)
 		flush();
@@ -333,14 +316,13 @@ void renderer2D::texture(uint32_t tex_id, const glm::f32mat4& transform)
 
 	for (i = 1; i < tex_count && (s_textures[i] != tex_id); i++)
 		;
-
-
+	
 	quad_vertex vertices[] = {
-		// positions					  // colors				      // texture coords
-		{transform * s_quad_vertices[0],  1.0f, 1.0f, 1.0f, _color.a, s_tex_coords[0], i}, // top right
-		{transform * s_quad_vertices[1],  1.0f, 1.0f, 1.0f, _color.a, s_tex_coords[1], i}, // bottom right
-		{transform * s_quad_vertices[2],  1.0f, 1.0f, 1.0f, _color.a, s_tex_coords[2], i}, // bottom left
-		{transform * s_quad_vertices[3],  1.0f, 1.0f, 1.0f, _color.a, s_tex_coords[3], i}  // top left 
+		// positions					  // colors							  // texture coords
+		{transform * s_quad_vertices[0],  color.r, color.g, color.b, color.a, tex_coords[0], i}, // top right
+		{transform * s_quad_vertices[1],  color.r, color.g, color.b, color.a, tex_coords[1], i}, // bottom right
+		{transform * s_quad_vertices[2],  color.r, color.g, color.b, color.a, tex_coords[2], i}, // bottom left
+		{transform * s_quad_vertices[3],  color.r, color.g, color.b, color.a, tex_coords[3], i}  // top left 
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
@@ -348,19 +330,20 @@ void renderer2D::texture(uint32_t tex_id, const glm::f32mat4& transform)
 	quads_count++;
 
 	quad_shader->bind();
-	
+
 	if (i == tex_count) {
 		glBindTextureUnit(tex_count, tex_id);
 		s_textures[i] = tex_id;
 		tex_count++;
 	}
-}	
+}
+
 
 void renderer2D::create_texture(uint32_t& tex_id, uint8_t* data, int width, int height)
 {
-	
+	quad_shader->bind();
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &tex_id);
-	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, tex_id);
 	
 	// set the texture wrapping/filtering options (on the currently bound texture object)
@@ -371,25 +354,22 @@ void renderer2D::create_texture(uint32_t& tex_id, uint8_t* data, int width, int 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	// glCreateTextures(GL_TEXTURE_2D, 1, &tex_id);
-	// 
-	// glTextureStorage2D(tex_id, 1, GL_RGBA8, width, height);
-	// 
-	// glTextureParameteri(tex_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTextureParameteri(tex_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// 
-	// glTextureParameteri(tex_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	// glTextureParameteri(tex_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// 
-	// 
-	// glTextureSubImage2D(tex_id, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glBindTexture(GL_TEXTURE_2D, s_white_texture.id());
 }
 
-void renderer2D::free_texture(uint32_t tex_id)
+void renderer2D::delete_texture(uint32_t tex_id)
 {
 	glDeleteTextures(1, &tex_id);
+}
+
+const renderer2D::texture_t& renderer2D::white_texture()
+{
+	return s_white_texture;
+}
+
+const renderer2D::texture_coords_t& renderer2D::default_texture_coords()
+{
+	return s_texture_coords;
 }
 
 void renderer2D::flush()

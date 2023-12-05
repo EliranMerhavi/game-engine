@@ -6,7 +6,7 @@ component::collider_callback::collider_callback(const collider_function& callbac
 {
 }
 
-void component::collider_callback::on_collision(game_engine::game_object&  obj, game_engine::game_object& other) const
+void component::collider_callback::on_collision(game_object_t&  obj, game_object_t& other) const
 {
 	m_callback(obj, other);
 }

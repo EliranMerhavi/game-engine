@@ -2,7 +2,7 @@
 #include "rectCircCollisions.h"
 #include "scene/components.h"
 namespace rectCircCollisions {
-	bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
+	bool isColliding(game_object_t& A, game_object_t& B)
 	{
 		auto& rect = A.get<component::transform>();
 		auto& circ = B.get<component::transform>();
@@ -112,7 +112,7 @@ namespace rectCircCollisions {
 		return true;
 	}
 
-	bool linearCollision(game_engine::game_object& A, game_engine::game_object& B, float e)
+	bool linearCollision(game_object_t& A, game_object_t& B, float e)
 	{
 		auto& rect = A.get<component::transform>();
 		auto& circ = B.get<component::transform>();

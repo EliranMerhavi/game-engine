@@ -2,13 +2,10 @@
 
 #include <string>
 
-namespace game_engine
-{
-	struct scene;
-}
 
+struct scene_t;
 
-#define UNLIMITED_FPS 0.0f
+#define UNLIMITED_FPS 0.000001f
 
 struct config_t
 {
@@ -18,5 +15,5 @@ struct config_t
 	std::string window_title = "default";
 	int width = 500;
 	int height = 500;
-	game_engine::scene* starting_scene = nullptr;
+	scene_t* starting_scene = nullptr;
 };

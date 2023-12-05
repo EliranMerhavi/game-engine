@@ -1,17 +1,19 @@
 #include "pch.h"
 #include "quad.h"
 
-component::quad::quad() : component::quad::quad({0, 0, 0, 1})
+component::quad::quad(const glm::f32vec4& color, const renderer2D::texture_t* texture)
+	: m_color(color), m_texture(texture)
 {
 }
 
-component::quad::quad(const glm::f32vec4& color) : m_color(color)
+component::quad::quad(const renderer2D::texture_t* texture)
+	: component::quad::quad(glm::f32vec4(1), texture)
 {
 }
 
-void component::quad::set_color(const glm::f32vec4& color)
+const renderer2D::texture_t& component::quad::texture() const
 {
-	m_color = color;
+	return *m_texture;
 }
 
 const glm::f32vec4& component::quad::color() const

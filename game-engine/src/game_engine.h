@@ -3,14 +3,13 @@
 #include "core/config.h"
 
 struct GLFWwindow;
+class scene_t;
 
 namespace game_engine
 {
-	class scene;
-
 	void init(const config_t& config={});
 	void run();
-	void set_scene(scene& scene);
+	void set_scene(scene_t& scene);
 	GLFWwindow* window();
 
 	namespace config

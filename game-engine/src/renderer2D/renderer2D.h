@@ -2,7 +2,9 @@
 #define GLEW_STATIC
 
 #include <glm/glm.hpp>
+#include <array>
 #include "shader.h"
+#include "texture_t.h"
 
 namespace renderer2D
 {
@@ -13,11 +15,13 @@ namespace renderer2D
 	void set_camera(const glm::f32mat4& camera);
 	void set_color(const glm::f32vec4& color);
 	void set_color(float r, float g, float b, float a);
+	
+	void line(const glm::f32vec2& from, const glm::f32vec2& to);
 
 	void circle(float x, float y, float radius);
 	void circle(const glm::f32mat4& transform);
+	void circle(const glm::f32mat4& transform, const glm::f32vec4& color);
 
-	void line(const glm::f32vec2& from, const glm::f32vec2& to);
 
 	void rotated_quad(float x, float y, float w, float h, float degrees);
 	void rotated_quad(const glm::f32vec2& position, const glm::f32vec2& dimensions, float degrees);
@@ -26,14 +30,15 @@ namespace renderer2D
 	void quad(float x, float y, float w, float h);
 	void quad(const glm::f32vec2& position, const glm::f32vec2& dimensions);
 	void quad(const glm::f32mat4& transform);
+	void quad(const glm::f32mat4& transform, const glm::f32vec4& color, uint32_t tex_id, const std::array<glm::f32vec2, 4>& tex_coords);
 
-	
-	void texture(uint32_t tex_id, float x, float y, float w, float h);
-	void texture(uint32_t tex_id, const glm::f32vec2& position, const glm::f32vec2& dimensions);
-	void texture(uint32_t tex_id, const glm::f32mat4& transform);
+
 
 	void create_texture(uint32_t& tex_id, uint8_t* data, int width, int height);
-	void free_texture(uint32_t tex_id);
+	void delete_texture(uint32_t tex_id);
+
+	const texture_t& white_texture();
+	const texture_coords_t& default_texture_coords();
 
 	void flush();
 	void clear();

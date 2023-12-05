@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "rectCollisions.h"
-#include "scene/game_object.h"
+#include "scene/game_object_t.h"
 #include <limits>
 #include "scene/components.h"
 namespace rectCollisions {
-    bool isColliding(game_engine::game_object& A, game_engine::game_object& B)
+    bool isColliding(game_object_t& A, game_object_t& B)
     {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();
@@ -110,7 +110,7 @@ namespace rectCollisions {
         return true;
     }
 
-    bool linearCollision(game_engine::game_object& A, game_engine::game_object& B, float e)
+    bool linearCollision(game_object_t& A, game_object_t& B, float e)
     {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();

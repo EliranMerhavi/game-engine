@@ -23,8 +23,6 @@ opengl::shader::shader(const std::string& vertex_shader_filepath, const std::str
 	
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-
-
 }
 
 opengl::shader::~shader()

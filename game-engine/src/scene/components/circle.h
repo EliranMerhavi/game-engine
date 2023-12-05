@@ -6,10 +6,8 @@ namespace component
 	class circle
 	{
 	public:
-		circle();
-		circle(const glm::f32vec4& color);
+		circle(const glm::f32vec4& color=glm::f32vec4(1.0f));
 
-		void set_color(const glm::f32vec4& color);
 		const glm::f32vec4& color() const;
 	private:
 		glm::f32vec4 m_color;

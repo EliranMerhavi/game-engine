@@ -2,7 +2,7 @@
 #include "update_callback.h"
 
 
-component::update_callback::update_callback(game_engine::game_object obj, const update_function& callback) : 
+component::update_callback::update_callback(game_object_t obj, const update_function& callback) :
 	m_callback(callback), m_obj(obj)
 {
 }

@@ -2,16 +2,14 @@
 
 #include "ecs/registry.h"
 
-namespace game_engine 
-{
-	class scene;
-}
+
+class scene_t;
 
 class phsyics2D_system {
 public:
-	phsyics2D_system(game_engine::scene& _scene);
+	phsyics2D_system(scene_t& _scene);
 	void update();
 
 private:
-	game_engine::scene& m_scene;
+	scene_t& m_scene;
 };

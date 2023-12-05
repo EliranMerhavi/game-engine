@@ -1,17 +1,13 @@
 #pragma once
 
-#include "scene/scene.h"
+#include "scene/scene_t.h"
+#include "renderer2D/texture_t.h"
 
-class test_scene : public game_engine::scene
+class test_scene : public scene_t
 {
 public:
 	test_scene();
-	~test_scene();
-	
+	virtual ~test_scene() override;
 	virtual void on_create() override;
-	void create_texture();
-	void create_quad();
 private:
-
-	uint32_t tex_id1, tex_id2;
 };

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <unordered_map>
 #include <functional>
-
+#include <span>
 namespace ecs
 {
 	template<typename t>
@@ -52,14 +52,14 @@ namespace ecs
 			m_index_table.erase(entity);
 		}
 
-		const std::vector<t>& data() const
+		std::span<const t> data() const
 		{
-			return m_components;
+			return std::span(m_components.begin(), m_components.end());
 		}
 		
-		const std::vector<ecs::entity_t>& entities() const
+		std::span<const ecs::entity_t> entities() const
 		{
-			return m_rev_index_table;
+			return std::span(m_rev_index_table.begin(), m_rev_index_table.end());
 		}
 
 	private:
