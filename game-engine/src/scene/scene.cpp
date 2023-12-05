@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "scene.h"
+
 #include "ecs/components.h"
-#include "game_object.h"
+
 #include "renderer2D/renderer2D.h"
+#include "physics2D/phsyics.h"
+#include "game_object.h"
 
 
-game_engine::scene::scene()
+game_engine::scene::scene() : m_registry(), system(*this)
 {
 	auto main_camera = create_game_object();
 	main_camera.add<component::camera>(-0.5f, 0.5f, -0.5f, 0.5f);
@@ -18,7 +21,7 @@ game_engine::scene::~scene()
 
 game_engine::game_object game_engine::scene::create_game_object()
 {
-	game_object object(this->m_registry);
+	game_object object(*this);
 	object.add<component::transform>();
 	return object;
 }
@@ -34,13 +37,12 @@ game_engine::game_object game_engine::scene::get_game_object_by_tag(const std::s
 {
 	for (auto entity : m_registry.pool<component::tag>().entities()) {
 		if (m_registry.get<component::tag>(entity).str() == tag) {
-			return game_engine::game_object(entity, m_registry);
+			return game_engine::game_object(entity, *this);
 		}
 	}
 	
 	throw std::exception("couldnt find entity with the tag");
 }
-
 
 void game_engine::scene::render()
 {
@@ -60,7 +62,7 @@ void game_engine::scene::render()
 		auto& transform = m_registry.get<component::transform>(entity);
 		auto& quad = m_registry.get<component::quad>(entity);
 		renderer2D::set_color(quad.color());
-		renderer2D::circle(transform.matrix());
+		renderer2D::quad(transform.matrix());
 	}
 
 	for (ecs::entity_t entity : m_registry.pool<component::circle>().entities()) {
@@ -80,4 +82,5 @@ void game_engine::scene::update()
 	for (const auto& callback : m_registry.pool<component::update_callback>().data()) {
 		callback.update();
 	}
+	system.update();
 }

@@ -1,18 +1,15 @@
 #include "pch.h"
 #include "game_object.h"
 
-
-game_engine::game_object::game_object(ecs::registry& registry) : game_engine::game_object(registry.create(), registry)
+game_engine::game_object::game_object(game_engine::scene& _scene) : m_id(_scene.m_registry.create()), m_scene(_scene)
 {
 }
 
-
-
-void game_engine::game_object::delete_object()
+game_engine::game_object::game_object(ecs::entity_t id, game_engine::scene& _scene) : m_id(id), m_scene(_scene)
 {
-
 }
 
-game_engine::game_object::game_object(ecs::entity_t id, ecs::registry& registry) : m_id(id), m_registry(registry)
+game_engine::scene& game_engine::game_object::scene()
 {
+	return m_scene;
 }

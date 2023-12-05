@@ -1,15 +1,25 @@
 #pragma once
-#pragma once
-#include <stdint.h>
 
-enum key_state
-{
-	RELEASED,
-	PRESSED,
-	REPEAT
-};
+#include <stdint.h>
+#include "GLFW/glfw3.h"
 
 using keycode_t = uint16_t;
+using mousecode_t = uint16_t;
+
+namespace mouse
+{
+	enum : mousecode_t
+	{
+		BUTTON1 = GLFW_MOUSE_BUTTON_1,
+		BUTTON2 = GLFW_MOUSE_BUTTON_2,
+		BUTTON3 = GLFW_MOUSE_BUTTON_3,
+		BUTTON4 = GLFW_MOUSE_BUTTON_4,
+		BUTTON5 = GLFW_MOUSE_BUTTON_5,
+		BUTTON6 = GLFW_MOUSE_BUTTON_6,
+		BUTTON7 = GLFW_MOUSE_BUTTON_7,
+		BUTTON8 = GLFW_MOUSE_BUTTON_8,
+	};
+}
 
 namespace key
 {

@@ -1,16 +1,18 @@
 #pragma once
 #include <functional>
-#include "renderer2D/renderer2D.h"
+#include "core/time.h"
+#include "scene/game_object.h"
 
 namespace component
 {
 	class render_callback
 	{
 	public:
-		using render_function = std::function<void()>;
-		render_callback(const render_function& callback);
+		using render_function = void(*)(game_engine::game_object& obj);
+		render_callback(game_engine::game_object obj, const render_function& callback);
 		void render() const;
 	private:
 		render_function m_callback;
+		mutable game_engine::game_object m_obj;
 	};
 }

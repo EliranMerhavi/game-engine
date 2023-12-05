@@ -10,11 +10,16 @@ namespace component {
         float omega;
         glm::f32vec2 velocity;
         glm::f32vec2 acceleration;
-        std::string type;
+
         float moment;
+        float restitution;
+        
+        bool staticPos;
+        bool staticRot;
 
-        void intialize(float m, float om,glm::f32vec2 vel, std::string type);
-
+        void intialize(float m, float om,glm::f32vec2 vel);
+        
     };
+    
 }
 
