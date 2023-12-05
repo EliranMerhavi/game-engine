@@ -5,7 +5,8 @@
 #include "circCollisions.h"
 #include "rectCircCollisions.h"
 #include "rectCollisions.h"
-phsyics2D_system::phsyics2D_system(game_engine::scene& _scene) : m_scene(_scene)
+
+phsyics2D_system::phsyics2D_system(scene_t& _scene) : m_scene(_scene)
 {
 }
 
@@ -18,8 +19,9 @@ void phsyics2D_system::update()
 	for (int i = 0; i < n; i++) {
 
 		for (int j = i + 1; j < n; j++) {
-			game_engine::game_object obj1(entities[i], m_scene),
-									 obj2(entities[j], m_scene);
+			game_object_t obj1(entities[i], m_scene),
+						  obj2(entities[j], m_scene);
+
 			if (obj1.has<component::circle>() && obj2.has<component::circle>())
 				circCollisions::rotationalCollision(obj1, obj2, std::min(obj1.get<component::rigidBody>().restitution, obj2.get<component::rigidBody>().restitution));
 			if (obj1.has<component::circle>() && obj2.has<component::quad>()) 

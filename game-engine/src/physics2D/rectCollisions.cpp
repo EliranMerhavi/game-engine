@@ -209,7 +209,7 @@ namespace rectCollisions {
         return true;
     }
 
-    bool rotationalCollision(game_engine::game_object& A, game_engine::game_object& B, float e)
+    bool rotationalCollision(game_object_t& A, game_object_t& B, float e)
     {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();

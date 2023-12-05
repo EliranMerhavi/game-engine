@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ecs/components/rigidBody.h"
-#include "scene/game_object.h"
-#include "ecs/components.h"
-#include "renderer2D/renderer2D_utils.h"
+#include "scene/components/rigidBody.h"
+#include "scene/game_object_t.h"
+#include "scene/components.h"
+
 #include "core/input.h"
-glm::f32vec2 mutualGravity(game_engine::game_object obj1, game_engine::game_object obj2, float strength);
+
+glm::f32vec2 mutualGravity(game_object_t obj1, game_object_t obj2, float strength);

@@ -17,8 +17,7 @@ namespace component {
         bool staticPos;
         bool staticRot;
 
-        void intialize(float m, float om,glm::f32vec2 vel);
-        
+        rigidBody(float m, float om, glm::f32vec2 vel);
     };
     
 }

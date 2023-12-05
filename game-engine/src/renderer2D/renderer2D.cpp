@@ -374,13 +374,6 @@ const renderer2D::texture_coords_t& renderer2D::default_texture_coords()
 
 void renderer2D::flush()
 {
-	if (lines_count)
-	{
-		glBindVertexArray(line_vao);
-		glDrawArrays(GL_LINES, 0, lines_count * 2);
-		lines_count = 0;
-	}
-	
 	if (quads_count)
 	{
 		quad_shader->bind();
@@ -396,6 +389,13 @@ void renderer2D::flush()
 		glBindVertexArray(circle_vao);
 		glDrawElements(GL_TRIANGLES, circle_count * 6, GL_UNSIGNED_INT, nullptr);
 		circle_count = 0;
+	}
+
+	if (lines_count)
+	{
+		glBindVertexArray(line_vao);
+		glDrawArrays(GL_LINES, 0, lines_count * 2);
+		lines_count = 0;
 	}
 }
 

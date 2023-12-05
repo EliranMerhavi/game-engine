@@ -1,18 +1,7 @@
 #include "pch.h"
 #include "rigidBody.h"
 
-void component::rigidBody::intialize(float m, float om, glm::f32vec2 vel)
+component::rigidBody::rigidBody(float m, float om, glm::f32vec2 vel)
+	: mass(m), omega(om), velocity(vel), restitution(1), acceleration({0, 0}), moment(m), staticPos(0), staticRot(0)
 {
-	this->mass = m;
-	this->omega = om;
-	this->velocity = vel;
-	this->restitution = 1;
-	this->acceleration = { 0,0 };
-	this->moment = m;
-
-	this->staticPos = 0;
-	this->staticRot = 0;
-	
 }
-
-

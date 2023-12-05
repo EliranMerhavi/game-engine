@@ -252,7 +252,7 @@ namespace rectCircCollisions {
 		return true;
 	}
 
-	bool rotationalCollision(game_engine::game_object& A, game_engine::game_object& B, float e)
+	bool rotationalCollision(game_object_t& A, game_object_t& B, float e)
 	{
 		auto& rect = A.get<component::transform>();
 		auto& circ = B.get<component::transform>();

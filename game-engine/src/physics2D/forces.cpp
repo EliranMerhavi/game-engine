@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "forces.h"
 
-glm::f32vec2 mutualGravity(game_engine::game_object obj1, game_engine::game_object obj2, float strength)
+glm::f32vec2 mutualGravity(game_object_t obj1, game_object_t obj2, float strength)
 {
 	glm::f32vec2 pos1 = obj1.get<component::transform>().position();
 	glm::f32vec2 pos2 = obj2.get<component::transform>().position();
