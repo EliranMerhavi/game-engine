@@ -20,7 +20,6 @@ namespace component
 		const glm::f32vec2& scale() const { return m_scale; }
 		float rotation() const { return m_rotation; }
 
-
 		const glm::f32mat4& matrix() const;
 	private:
 		void update_cache();

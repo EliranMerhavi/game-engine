@@ -16,7 +16,7 @@ void phsyics2D_system::update()
 	int n = entities.size();
 
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n - 1; i++) {
 
 		for (int j = i + 1; j < n; j++) {
 			game_object_t obj1(entities[i], m_scene),
@@ -30,19 +30,15 @@ void phsyics2D_system::update()
 				rectCircCollisions::rotationalCollision(obj1, obj2, std::min(obj1.get<component::rigidBody>().restitution, obj2.get<component::rigidBody>().restitution));
 			if (obj1.has<component::quad>() && obj2.has<component::quad>())
 				rectCollisions::rotationalCollision(obj1, obj2, std::min(obj1.get<component::rigidBody>().restitution, obj2.get<component::rigidBody>().restitution));
-				
-				//std::cout << obj2.get<component::rigidBody>().velocity.y << ", " << obj2.get<component::rigidBody>().omega << "\n";
 		}
 	}
 
 	for (auto entity : entities) {
 		auto& transform = m_scene.m_registry.get<component::transform>(entity);
 		auto& rigid_body = m_scene.m_registry.get<component::rigidBody>(entity);
-		if (!rigid_body.staticPos) {
-			rigid_body.acceleration = { 0,-0.2 };
-		}
 		
 		rigid_body.velocity += rigid_body.acceleration;
+
 		transform.set_position(transform.position() + rigid_body.velocity);
 		transform.set_rotation(transform.rotation() + rigid_body.omega * 180/M_PI);
 	}

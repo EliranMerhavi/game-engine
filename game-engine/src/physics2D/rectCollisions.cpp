@@ -314,10 +314,10 @@ namespace rectCollisions {
 
 
         if (glm::dot(normal, posB - posA) < 0) {
-            if (physA.staticPos) {
+            if (physA.static_position) {
                 objB.set_position(posB - 1 * returnDepth * normal);
             }
-            else if (physB.staticPos) {
+            else if (physB.static_position) {
                 objA.set_position(posA + 1 * returnDepth  * normal);
             }
             else {
@@ -326,10 +326,10 @@ namespace rectCollisions {
             }
         }
         else {
-            if (physA.staticPos) {
+            if (physA.static_position) {
                 objB.set_position(posB + 1 * returnDepth * normal);
             }
-            else if (physB.staticPos) {
+            else if (physB.static_position) {
                 objA.set_position(posA - 1 * returnDepth * normal);
             }
             else {
@@ -340,14 +340,14 @@ namespace rectCollisions {
          
 
         float invMA, invMB;
-        if (physA.staticPos) {
-            if (physB.staticPos) {
+        if (physA.static_position) {
+            if (physB.static_position) {
                 return true;
             }
             invMA = 0;
         }
         else { invMA = 1 / physA.mass; }
-        if (physB.staticPos) {
+        if (physB.static_position) {
             invMB = 0;
         }
         else { invMB = 1 / physB.mass; }
@@ -356,11 +356,11 @@ namespace rectCollisions {
         float IA = physA.mass * (wA * wA + hA * hA) / 12;
         float IB = physB.mass * (wB * wB + hB * hB) / 12;
         float invIA, invIB;
-        if (physA.staticRot) {
+        if (physA.static_rotation) {
             invIA = 0;
         }
         else { invIA = 1 / IA; }
-        if (physB.staticRot) {
+        if (physB.static_rotation) {
             invIB = 0;
         }
         else { invIB = 1 / IB; }

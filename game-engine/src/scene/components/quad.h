@@ -8,7 +8,7 @@ namespace component
 	class quad
 	{
 	public:
-		quad(const glm::f32vec4& color, const renderer2D::texture_t* texture=&renderer2D::white_texture());
+		quad(const glm::f32vec4& color=glm::f32vec4(1), const renderer2D::texture_t* texture = &renderer2D::white_texture());
 		quad(const renderer2D::texture_t* texture);
 
 		const renderer2D::texture_t& texture() const;

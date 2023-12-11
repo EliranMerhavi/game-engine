@@ -207,10 +207,10 @@ namespace rectCircCollisions {
 		
 		// At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
 		if (glm::dot(normal, posRect - posCirc) > 0) {
-			if (physA.staticPos) {
+			if (physA.static_position) {
 				circ.set_position(posCirc - returnDepth * normal);
 			}
-			else if (physB.staticPos) {
+			else if (physB.static_position) {
 				rect.set_position(posRect + returnDepth * normal);
 			}
 			else {
@@ -220,10 +220,10 @@ namespace rectCircCollisions {
 			
 		}
 		else {
-			if (physA.staticPos) {
+			if (physA.static_position) {
 				circ.set_position(posCirc + returnDepth * normal);
 			}
-			else if (physB.staticPos) {
+			else if (physB.static_position) {
 				rect.set_position(posRect - returnDepth * normal);
 			}
 			else {
@@ -233,11 +233,11 @@ namespace rectCircCollisions {
 		}
 
 		float invMA, invMB;
-		if (physA.staticPos) {
+		if (physA.static_position) {
 			invMA = 0;
 		}
 		else { invMA = 1 / physA.mass; }
-		if (physB.staticPos) {
+		if (physB.static_position) {
 			invMB = 0;
 		}
 		else { invMB = 1 / physB.mass; }
@@ -358,10 +358,10 @@ namespace rectCircCollisions {
 
 		// At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
 		if (glm::dot(normal, posRect - posCirc) > 0) {
-			if (physA.staticPos) {
+			if (physA.static_position) {
 				circ.set_position(posCirc - returnDepth * normal);
 			}
-			else if (physB.staticPos) {
+			else if (physB.static_position) {
 				rect.set_position(posRect + returnDepth * normal);
 			}
 			else {
@@ -371,10 +371,10 @@ namespace rectCircCollisions {
 
 		}
 		else {
-			if (physA.staticPos) {
+			if (physA.static_position) {
 				circ.set_position(posCirc + returnDepth * normal);
 			}
-			else if (physB.staticPos) {
+			else if (physB.static_position) {
 				rect.set_position(posRect - returnDepth * normal);
 			}
 			else {
@@ -384,14 +384,14 @@ namespace rectCircCollisions {
 		}
 
 		float invMA, invMB;
-		if (physA.staticPos) {
-			if (physB.staticPos) {
+		if (physA.static_position) {
+			if (physB.static_position) {
 				return true;
 			}
 			invMA = 0;
 		}
 		else { invMA = 1 / physA.mass; }
-		if (physB.staticPos) {
+		if (physB.static_position) {
 			invMB = 0;
 		}
 		else { invMB = 1 / physB.mass; }
@@ -399,11 +399,11 @@ namespace rectCircCollisions {
 		//moments of inertia
 
 		float invIA, invIB;
-		if (physB.staticRot) {
+		if (physB.static_rotation) {
 			invIB = 0;
 		}
 		else { invIB = 3 / (2 * physB.mass * r); }
-		if (physA.staticRot) {
+		if (physA.static_rotation) {
 			invIA = 0;
 		}
 		else { invIA = 12 / (physA.mass * (w * w + h * h)); }

@@ -30,7 +30,7 @@ void game_engine::init(const config_t& config)
     assert(glfw_window && "error on glfwCreateWindow()");
 
     glfwMakeContextCurrent(glfw_window);
-
+   
     GLenum error = glewInit();
   
     if (error != GLEW_OK)
@@ -51,6 +51,7 @@ void game_engine::init(const config_t& config)
         }, 0);
 #endif
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwSetWindowCloseCallback(glfw_window, [](GLFWwindow* window) {
         running = false;
     });

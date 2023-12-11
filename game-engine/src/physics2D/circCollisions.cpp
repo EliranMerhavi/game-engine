@@ -78,7 +78,7 @@ namespace circCollisions {
         auto& physB = B.get<component::rigidBody>();
 
 
-        if (physA.staticPos && physB.staticPos) {
+        if (physA.static_position && physB.static_position) {
             return false;
         }
         float rA = objA.scale().x / 2;
@@ -101,10 +101,10 @@ namespace circCollisions {
         
 
         if (glm::dot(normal, posA - posB) > 0) {
-            if (physA.staticPos) {
+            if (physA.static_position) {
                 objB.set_position(posB - depth * normal);
             }
-            else if (physB.staticPos) {
+            else if (physB.static_position) {
                 objA.set_position(posA + depth * normal);
             }
             else {
@@ -114,10 +114,10 @@ namespace circCollisions {
         }
         else {
 
-            if (physA.staticPos) {
+            if (physA.static_position) {
                 objB.set_position(posB + depth * normal);
             }
-            else if (physB.staticPos) {
+            else if (physB.static_position) {
                 objA.set_position(posA - depth * normal);
             }
             else {
@@ -127,11 +127,11 @@ namespace circCollisions {
         }
         
         float invMA, invMB;
-        if (physA.staticPos) {
+        if (physA.static_position) {
             invMA = 0;
         }
         else { invMA = 1 / physA.mass; }
-        if (physB.staticPos) {
+        if (physB.static_position) {
             invMB = 0;
         }
         else { invMB = 1 / physB.mass; }
@@ -140,11 +140,11 @@ namespace circCollisions {
         float IA = physA.mass * 2 * rA /3;
         float IB = physB.mass * 2 * rB/3;
         float invIA, invIB;
-        if (physA.staticRot) {
+        if (physA.static_rotation) {
             invIA = 0;
         }
         else { invIA = 1 / IA; }
-        if (physB.staticRot) {
+        if (physB.static_rotation) {
             invIB = 0;
         }
         else { invIB = 1 / IB; }

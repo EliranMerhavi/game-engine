@@ -14,24 +14,24 @@ void input::init()
     });
 }
 
-input::state input::get_key_state(keycode_t code)
+input::state input::key_state(keycode_t code)
 {    
     return (state)glfwGetKey(game_engine::window(), code);
 }
 
-input::state input::get_mouse_state(mousecode_t button)
+input::state input::mouse_state(mousecode_t button)
 {   
     return (state)glfwGetMouseButton(game_engine::window(), button);
 }
 
-float input::get_mouse_scroll_offset()
+float input::mouse_scroll_offset()
 {
     float res = yoffset;
     yoffset = 0.0f;
     return res;
 }
 
-glm::f32vec2 input::get_mouse_position()
+glm::f32vec2 input::mouse_position()
 {
     glm::f64vec2 res;
     glfwGetCursorPos(game_engine::window(), &res.x, &res.y);

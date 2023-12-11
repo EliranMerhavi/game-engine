@@ -11,13 +11,14 @@ namespace component {
         glm::f32vec2 velocity;
         glm::f32vec2 acceleration;
 
-        float moment;
         float restitution;
         
-        bool staticPos;
-        bool staticRot;
+        bool static_position;
+        bool static_rotation;
 
-        rigidBody(float m, float om, glm::f32vec2 vel);
+        rigidBody(float mass, float omega, glm::f32vec2 vel, bool static_position, bool static_rotation, 
+                  float restitution=1);
+
     };
     
 }
