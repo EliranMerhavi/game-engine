@@ -1,7 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "renderer2D/renderer2D.h"
-#include <iostream>
+#include "physics2D/collisions.h"
 
 namespace component {
     class rigidBody {
@@ -13,7 +13,11 @@ namespace component {
         std::string type;
         float moment;
 
-        void intialize(float m, float om,glm::f32vec2 vel, std::string type);
+        collisions::type collision_type;
+
+        rigidBody(collisions::type collision_type, float mass, float omega, glm::f32vec2 vel, bool static_position, bool static_rotation,
+                  float restitution=1);
+
     };
 }
 

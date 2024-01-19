@@ -10,6 +10,11 @@ game_object_t::game_object_t(ecs::entity_t id, scene_t& _scene) : m_id(id), m_sc
 {
 }
 
+game_object_t& game_object_t::clone()
+{
+	return m_scene->clone_game_object(m_id);
+}
+
 
 ecs::entity_t game_object_t::id() const
 {

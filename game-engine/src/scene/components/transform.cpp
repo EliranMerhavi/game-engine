@@ -12,7 +12,7 @@ component::transform::transform(const glm::f32vec2& position, const glm::f32vec2
 	update_cache();
 }
 
-void component::transform::set_transform(const glm::f32vec2& position, const glm::f32vec2& scale, float rotation)
+void component::transform::set_data(const glm::f32vec2& position, const glm::f32vec2& scale, float rotation)
 {
 	m_position = position;
 	m_scale = scale;
@@ -20,6 +20,10 @@ void component::transform::set_transform(const glm::f32vec2& position, const glm
 	update_cache();
 }
 
+std::tuple<glm::f32vec2, glm::f32vec2, float> component::transform::data() const
+{
+	return { m_position, m_scale, m_rotation };
+}
 
 void component::transform::set_position(const glm::f32vec2& position)
 {

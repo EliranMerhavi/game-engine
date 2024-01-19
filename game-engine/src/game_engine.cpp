@@ -18,7 +18,6 @@ namespace game_engine
 void game_engine::init(const config_t& config)
 {
     assert(config.starting_scene != nullptr);
-    assert(config.limitFPS >= 0);
     assert(config.width > 0 && config.height > 0);
     
     config_data = config;
@@ -57,7 +56,6 @@ void game_engine::init(const config_t& config)
 
     input::init();
     renderer2D::init();
-    config::set_limitFPS(config.limitFPS);
     config::set_vsync(config_data.vsync);
     set_scene(*config.starting_scene);
 }
@@ -71,17 +69,13 @@ void game_engine::run()
         renderer2D::clear();
 
         time_step_t current_time = time::current();
-        time::s_delta_time += (current_time - previous_time) / config_data.limitFPS;
+        time::s_delta_time = current_time - previous_time;
         previous_time = current_time;
 
         if (!current_scene)
             continue;
 
-        if (time::s_delta_time >= 1.0) {
-            current_scene->update();
-            time::s_delta_time--;
-        }
-
+        current_scene->update();
         current_scene->render();
         renderer2D::flush();
         glfwSwapBuffers(glfw_window);
@@ -117,12 +111,6 @@ void game_engine::config::set_vsync(bool vsync)
 {
 	glfwSwapInterval(vsync);
     config_data.vsync = vsync;
-}
-
-void game_engine::config::set_limitFPS(float fps)
-{
-    assert(fps > 0);
-    config_data.limitFPS = fps;
 }
 
 const config_t& game_engine::config::get_config()

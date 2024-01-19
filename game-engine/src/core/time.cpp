@@ -5,5 +5,5 @@ float time::s_delta_time = 0.0f;
 
 time_step_t time::current()
 {
-	return glfwGetTime();
+	return glfwGetTime() * 1000;
 }

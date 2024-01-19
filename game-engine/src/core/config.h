@@ -10,7 +10,6 @@ struct scene_t;
 struct config_t
 {
 	bool vsync = false;
-	float limitFPS = 0.0f;
 
 	std::string window_title = "default";
 	int width = 500;

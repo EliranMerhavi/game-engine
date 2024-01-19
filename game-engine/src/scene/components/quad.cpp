@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "quad.h"
 
+component::quad::quad(float r, float g, float b, float a, const renderer2D::texture_t* texture)
+	: m_color(r, g, b, a), m_texture(texture)
+{
+}
+
 component::quad::quad(const glm::f32vec4& color, const renderer2D::texture_t* texture)
 	: m_color(color), m_texture(texture)
 {
