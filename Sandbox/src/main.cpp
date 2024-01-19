@@ -8,12 +8,11 @@
 int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
-
-
+	
 	config_t config;
-
+	
 	config.vsync = false;
-	config.starting_scene = new test_scene(level0);
+	config.starting_scene = new test_scene();
 
 	game_engine::init(config);
 	game_engine::run();
