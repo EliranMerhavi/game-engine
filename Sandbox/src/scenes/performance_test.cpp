@@ -1,0 +1,82 @@
+#include "performance_test.h"
+#include "scene/game_object_t.h"
+#include "scene/components.h"
+#include "core/input.h"
+
+#define SIZE 10
+#define rand_value() ((rand() % 255) / 255.0f)
+
+performance_test::performance_test()
+{
+}
+
+void performance_test::on_load_resources()
+{
+}
+
+void performance_test::on_create()
+{
+	game_object_t camera = create_game_object();
+
+	camera.add<component::camera>(-500, 500, -500, 500);
+	camera.get<component::camera>().select_camera();
+	camera.add<component::update_callback>([](game_object_t& obj) {
+		auto* scene = obj.scene();
+		
+		auto& transform = obj.get<component::transform>();
+		glm::f32vec2 update{ 0, 0 };
+
+		if (input::key_state(key::A) == input::state::PRESSED) {
+			update.x -= time::delta_time();
+		}
+		if (input::key_state(key::D) == input::state::PRESSED) {
+			update.x += time::delta_time();
+		}
+		if (input::key_state(key::W) == input::state::PRESSED) {
+			update.y += time::delta_time();
+		}
+		if (input::key_state(key::S) == input::state::PRESSED) {
+			update.y -= time::delta_time();
+		}
+
+		transform.set_position(transform.position() + update);
+	});
+
+
+	int n = 100;
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			create_object({ i * SIZE, j * SIZE });
+		}
+	}
+}
+
+
+
+void performance_test::create_object(const glm::f32vec2& pos)
+{
+	game_object_t obj = create_game_object();
+
+	obj.get<component::transform>().set_data(pos, { SIZE, SIZE });
+	obj.add<component::quad>(rand_value(), rand_value(), rand_value(), 1.0f);
+
+	obj.add<component::update_callback>([](game_object_t& obj) {
+		auto* scene = obj.scene();
+		auto& transform = obj.get<component::transform>();
+		
+		auto mouse_pos = scene->to_world_position(input::mouse_position());
+
+		if (input::mouse_state(mouse::BUTTON1) != input::state::PRESSED) {
+			return;
+		}
+
+		if (glm::length(mouse_pos - transform.position()) < SIZE) {
+			scene->destroy_game_object(obj);
+		}
+
+	});
+
+}
+
+
