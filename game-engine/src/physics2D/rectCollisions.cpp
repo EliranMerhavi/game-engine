@@ -206,6 +206,13 @@ namespace rectCollisions {
         physA.velocity = physA.velocity + j / physA.mass * normal;
         physB.velocity = physB.velocity - j / physB.mass * normal;
 
+        if (A.has<component::collider_callback>()) {
+            A.get<component::collider_callback>()(A, B);
+        }
+        if (B.has<component::collider_callback>()) {
+            B.get<component::collider_callback>()(B, A);
+        }
+
         return true;
     }
 
@@ -213,7 +220,13 @@ namespace rectCollisions {
     {
         auto& objA = A.get<component::transform>();
         auto& objB = B.get<component::transform>();
-        //This is some downright retard level reformulation. Why we can't just agree to use radians is beyond me.
+        auto& physA = A.get<component::rigidBody>();
+        auto& physB = B.get<component::rigidBody>();
+
+        if (physA.static_position && physB.static_position)
+            return true;
+
+        // This is some downright retard level reformulation. Why we can't just agree to use radians is beyond me.
         float angleA = objA.rotation() * M_PI / 180;
         float angleB = objB.rotation() * M_PI / 180;
         glm::f32vec2 posA = objA.position();
@@ -268,10 +281,6 @@ namespace rectCollisions {
                 if (projA < minA) { minA = projA; }
                 if (projB > maxB) { maxB = projB; }
                 if (projB < minB) { minB = projB; }
-
-
-
-
             }
             depth = std::min(maxB - minA, maxA - minB);
             if (depth <= 0) { return false; }
@@ -305,13 +314,6 @@ namespace rectCollisions {
         }
         normal = normal / glm::length(normal);
         // At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-        
-
-
-        auto& physA = A.get<component::rigidBody>();
-        auto& physB = B.get<component::rigidBody>();
-
-
 
         if (glm::dot(normal, posB - posA) < 0) {
             if (physA.static_position) {
@@ -438,7 +440,12 @@ namespace rectCollisions {
         physA.omega += (rA.x * impulse.y - rA.y * impulse.x) * invIA;
         physB.omega -= (rB.x * impulse.y - rB.y * impulse.y) * invIB;
 
-        
+        if (A.has<component::collider_callback>()) {
+            A.get<component::collider_callback>()(A, B);
+        }
+        if (B.has<component::collider_callback>()) {
+            B.get<component::collider_callback>()(B, A);
+        }
 
         return true;
     }

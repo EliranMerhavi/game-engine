@@ -248,6 +248,12 @@ namespace rectCircCollisions {
 		physA.velocity = physA.velocity + j * invMA * normal;
 		physB.velocity = physB.velocity - j * invMB * normal;
 
+		if (A.has<component::collider_callback>()) {
+			A.get<component::collider_callback>()(A, B);
+		}
+		if (B.has<component::collider_callback>()) {
+			B.get<component::collider_callback>()(B, A);
+		}
 
 		return true;
 	}
@@ -258,6 +264,11 @@ namespace rectCircCollisions {
 		auto& circ = B.get<component::transform>();
 		auto& physA = A.get<component::rigidBody>();
 		auto& physB = B.get<component::rigidBody>();
+		
+		if (physA.static_position && physB.static_position)
+			return true; 
+		
+
 		float r = circ.scale().x / 2;
 		glm::f32vec2 posCirc = circ.position();
 
@@ -454,7 +465,12 @@ namespace rectCircCollisions {
 		physA.omega += (rA.x * impulse.y - rA.y * impulse.x) * invIA;
 		physB.omega -= (rB.x * impulse.y - rB.y * impulse.y) * invIB;
 
-
+		if (A.has<component::collider_callback>()) {
+			A.get<component::collider_callback>()(A, B);
+		}
+		if (B.has<component::collider_callback>()) {
+			B.get<component::collider_callback>()(B, A);
+		}
 
 		return true;
 	}

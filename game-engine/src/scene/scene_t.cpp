@@ -11,7 +11,7 @@
 scene_t::scene_t() : 
 	m_registry(), 
 	system(*this), 
-	m_camera_id((ecs::entity_t)-1)
+	m_selected_camera_data{.camera_id=(ecs::entity_t)-1}
 {
 	auto main_camera = create_game_object();
 	main_camera.add<component::camera>(-0.5f, 0.5f, -0.5f, 0.5f);
@@ -23,28 +23,47 @@ scene_t::~scene_t()
 {
 }
 
-game_object_t scene_t::create_game_object()
+game_object_t& scene_t::create_game_object()
 {
-	game_object_t object(*this);
-	object.add<component::transform>();
-	return object;
+	ecs::entity_t id = m_registry.create();
+	m_game_objects.emplace(id, game_object_t(id, *this));
+	m_game_objects.at(id).add<component::transform>();
+	return m_game_objects.at(id);
 }
 
-game_object_t scene_t::create_game_object(const std::string& tag)
+game_object_t& scene_t::create_game_object(const std::string& tag)
 {
-	game_object_t object = create_game_object();
+	game_object_t& object = create_game_object();
 	object.add<component::tag>(tag);
 	return object;
 }
 
-game_object_t scene_t::get_game_object_by_tag(const std::string& tag)
+void scene_t::destroy_game_object(const game_object_t& object)
 {
-	for (auto entity : m_registry.pool<component::tag>().entities()) {
+	m_registry.destroy(object.id());
+}
+
+game_object_t& scene_t::get_game_object_by_tag(const std::string& tag)
+{
+	for (auto entity : m_registry.entities<component::tag>()) {
 		if (m_registry.get<component::tag>(entity).str() == tag) {
-			return game_object_t(entity, *this);
+			return m_game_objects.at(entity);
 		}
 	}
 	throw std::exception("couldnt find entity with the tag");
+}
+
+game_object_t& scene_t::get_game_object(ecs::entity_t id)
+{
+	return m_game_objects.at(id);
+}
+
+
+game_object_t& scene_t::clone_game_object(ecs::entity_t id)
+{
+	ecs::entity_t cloned_id = m_registry.clone(id);
+	m_game_objects.emplace(cloned_id, game_object_t(cloned_id, *this));
+	return m_game_objects.at(cloned_id);
 }
 
 glm::f32vec2 scene_t::to_world_position(const glm::f32vec2& screen_position)
@@ -56,48 +75,56 @@ glm::f32vec2 scene_t::to_world_position(const glm::f32vec2& screen_position)
 	res.x = -1 + 2 * res.x / game_engine::config::window_width();
 	res.y =  1 - 2 * res.y / game_engine::config::window_height();
 	
-	res = m_inverse_camera_matrix_cache * glm::f32vec4(res, 0, 1);
+	res = m_selected_camera_data.inverse_camera_matrix_cache * glm::f32vec4(res, 0, 1);
 	
 	return res;
+}
+
+void scene_t::render_gui()
+{
 }
 
 void scene_t::render()
 {
 	calculate_camera_matrix();
 
-	renderer2D::set_camera(m_camera_matrix_cache);
+	renderer2D::set_camera(m_selected_camera_data.camera_matrix_cache);
 
-	for (ecs::entity_t entity : m_registry.pool<component::quad>().entities()) {
+	for (ecs::entity_t entity : m_registry.entities<component::quad>()) {
 		auto& transform = m_registry.get<component::transform>(entity);
 		auto& quad = m_registry.get<component::quad>(entity);
 		renderer2D::quad(transform.matrix(), quad.color(), quad.texture().id(), quad.texture().coords());
 	}
 	
-	for (ecs::entity_t entity : m_registry.pool<component::circle>().entities()) {
+	for (ecs::entity_t entity : m_registry.entities<component::circle>()) {
 		auto& transform = m_registry.get<component::transform>(entity);
 		auto& circle = m_registry.get<component::circle>(entity);
 		renderer2D::circle(transform.matrix(), circle.color());
 	}
 	
-	for (const auto& callback : m_registry.pool<component::render_callback>().data()) {
-		callback.render();
+	for (ecs::entity_t entity : m_registry.entities<component::render_callback>()) {
+		auto& callback = m_registry.get<component::render_callback>(entity);
+		callback(get_game_object(entity));
 	}
 
 }
 
 void scene_t::update()
 {
-	for (const auto& callback : m_registry.pool<component::update_callback>().data()) {
-		callback.update();
+	for (ecs::entity_t entity : m_registry.entities<component::update_callback>()) {
+		auto& callback = m_registry.get<component::update_callback>(entity);
+		callback(get_game_object(entity));
 	}
 	system.update();
 }
 
 void scene_t::calculate_camera_matrix()
 {
+	auto& [m_camera_id, m_camera_matrix_cache, m_inverse_camera_matrix_cache] = m_selected_camera_data;
+
 	if (m_camera_id == (ecs::entity_t)-1 || !m_registry.get<component::camera>(m_camera_id).is_selected())
 	{
-		for (auto entity : m_registry.pool<component::camera>().entities())
+		for (auto entity : m_registry.entities<component::camera>())
 		{
 			auto& camera = m_registry.get<component::camera>(entity);
 			if (camera.is_selected())
@@ -116,3 +143,4 @@ void scene_t::calculate_camera_matrix()
 	m_camera_matrix_cache = camera.projection() * glm::inverse(transform.matrix());
 	m_inverse_camera_matrix_cache = glm::inverse(m_camera_matrix_cache);
 }
+

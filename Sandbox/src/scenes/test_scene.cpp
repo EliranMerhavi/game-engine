@@ -12,7 +12,6 @@ test_scene::test_scene(level_loader_t level0) : m_level0(level0)
 
 void test_scene::on_load_resources()
 {
-
 }
 
 void test_scene::on_create()

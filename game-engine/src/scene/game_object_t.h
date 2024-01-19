@@ -10,8 +10,11 @@ public:
 	game_object_t(scene_t& _scene);
 	game_object_t(ecs::entity_t id, scene_t& _scene);
 		
+	game_object_t& clone();
+	
 	ecs::entity_t id() const;
 	scene_t* scene();
+
 
 	template<typename T>
 	bool has() const

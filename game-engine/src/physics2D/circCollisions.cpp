@@ -62,10 +62,10 @@ namespace circCollisions {
 
 
         if (A.has<component::collider_callback>()) {
-            A.get<component::collider_callback>().on_collision(A, B);
+            A.get<component::collider_callback>()(A, B);
         }
         if (B.has<component::collider_callback>()) {
-            B.get<component::collider_callback>().on_collision(B, A);
+            B.get<component::collider_callback>()(B, A);
         }
 
         return true;
@@ -77,10 +77,9 @@ namespace circCollisions {
         auto& physA = A.get<component::rigidBody>();
         auto& physB = B.get<component::rigidBody>();
 
+        if (physA.static_position && physB.static_position)
+            return true;
 
-        if (physA.static_position && physB.static_position) {
-            return false;
-        }
         float rA = objA.scale().x / 2;
         float rB = objB.scale().x / 2;
         glm::f32vec2 posA = objA.position();
@@ -181,6 +180,12 @@ namespace circCollisions {
         physA.omega += (rAy.x * impulse.y - rAy.y * impulse.x) * invIA;
         physB.omega -= (rBy.x * impulse.y - rBy.y * impulse.y) * invIB;
 
+        if (A.has<component::collider_callback>()) {
+            A.get<component::collider_callback>()(A, B);
+        }
+        if (B.has<component::collider_callback>()) {
+            B.get<component::collider_callback>()(B, A);
+        }
 
         return true;
     }

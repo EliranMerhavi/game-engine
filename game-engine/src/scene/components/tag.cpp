@@ -9,3 +9,8 @@ const std::string& component::tag::str() const
 {
     return m_tag;
 }
+
+std::string& component::tag::str()
+{
+    return m_tag;
+}

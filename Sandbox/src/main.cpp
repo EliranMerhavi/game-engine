@@ -1,17 +1,18 @@
 #define GLEW_STATIC
 #include "game_engine.h"
+#include "levels/level0.h"
+#include "scenes/performance_test.h"
 #include "scenes/test_scene.h"
-
 
 int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
-	
+
+
 	config_t config;
 
-	config.limitFPS = 1.0f / 60.0f;
 	config.vsync = false;
-	config.starting_scene = new test_scene();
+	config.starting_scene = new test_scene(level0);
 
 	config.height = 500;
 	config.width = 1000;
