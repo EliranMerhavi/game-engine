@@ -13,12 +13,14 @@ namespace ecs
 		template<typename k, typename v>
 		using straight_map = std::unordered_map<k, v>;
 	public:
-		components_pool() : m_components(), m_rev_index_table(), m_index_table() {}
+		components_pool();
 
-		bool has(ecs::entity_t entity) const
-		{
-			return m_index_table.count(entity);
-		}
+		bool has(ecs::entity_t entity) const;
+		void copy(ecs::entity_t from, ecs::entity_t to);
+		void remove(ecs::entity_t entity);
+		
+		std::span<const ecs::entity_t> entities() const;
+		size_t size() const;
 
 		template<typename t>
 		t& get(ecs::entity_t entity) const
@@ -36,30 +38,6 @@ namespace ecs
 			m_components.emplace_back(t(std::forward<args_t>(args)...));
 		}
 
-		void copy(ecs::entity_t from, ecs::entity_t to)
-		{
-			assert(has(from) && !has(to));
-			
-			m_index_table[to] = m_components.size();
-			m_rev_index_table.push_back(to);
-			
-			m_components.emplace_back(m_components[m_index_table[from]]);
-		}
-
-		void remove(ecs::entity_t entity)
-		{
-			assert(has(entity));
-			
-			int i = m_index_table[entity];
-			
-			m_components[i] = m_components.back();
-			m_index_table[m_rev_index_table.back()] = i;
-
-			m_components.pop_back();
-			m_rev_index_table.pop_back();
-			m_index_table.erase(entity);
-		}
-
 		template<typename t>
 		std::vector<t> data() const
 		{
@@ -74,16 +52,7 @@ namespace ecs
 			return res;
 		}
 		
-		std::span<const ecs::entity_t> entities() const
-		{
-			return std::span(m_rev_index_table.begin(), m_rev_index_table.end());
-		}
-
-		size_t size() const 
-		{
-			return m_components.size();
-		}
-
+		
 	private:
 		mutable std::vector<std::any> m_components;
 		std::vector<ecs::entity_t> m_rev_index_table;

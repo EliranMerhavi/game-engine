@@ -12,12 +12,15 @@ performance_test::performance_test()
 
 void performance_test::on_load_resources()
 {
+	add_resource_search_path("assets/images/");
+	load_resource<resource::texture_t>("image.png", false);
+
 }
 
 void performance_test::on_create()
 {
 	game_object_t camera = create_game_object();
-
+	
 	camera.add<component::camera>(-500, 500, -500, 500);
 	camera.get<component::camera>().select_camera();
 	camera.add<component::update_callback>([](game_object_t& obj) {
@@ -29,38 +32,39 @@ void performance_test::on_create()
 		if (input::key_state(key::A) == input::state::PRESSED) {
 			update.x -= time::delta_time();
 		}
+
 		if (input::key_state(key::D) == input::state::PRESSED) {
 			update.x += time::delta_time();
 		}
+
 		if (input::key_state(key::W) == input::state::PRESSED) {
 			update.y += time::delta_time();
 		}
+
 		if (input::key_state(key::S) == input::state::PRESSED) {
 			update.y -= time::delta_time();
 		}
 
 		transform.set_position(transform.position() + update);
 	});
-
-
-	int n = 100;
 	
+	int n = 1250, m = 2;
+
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+		for (int j = 0; j < m; j++) {
 			create_object({ i * SIZE, j * SIZE });
 		}
 	}
 }
 
-
-
 void performance_test::create_object(const glm::f32vec2& pos)
 {
 	game_object_t obj = create_game_object();
+	auto& tex1 = resource<resource::texture_t>("image.png");
 
 	obj.get<component::transform>().set_data(pos, { SIZE, SIZE });
-	obj.add<component::quad>(rand_value(), rand_value(), rand_value(), 1.0f);
-
+	obj.add<component::quad>(rand_value(), rand_value(), rand_value(), 1.0f, &tex1);
+	
 	obj.add<component::update_callback>([](game_object_t& obj) {
 		auto* scene = obj.scene();
 		auto& transform = obj.get<component::transform>();

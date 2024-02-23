@@ -90,6 +90,7 @@ void game_engine::run()
 void game_engine::set_scene(scene_t& scene)
 {
     current_scene = &scene;
+    current_scene->on_load_resources();
     current_scene->on_create();
 }
 

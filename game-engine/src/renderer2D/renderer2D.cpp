@@ -52,7 +52,7 @@ namespace renderer2D
 	glm::f32vec4 s_quad_vertices[4];
 	texture_coords_t s_texture_coords;
 	uint32_t s_textures[32];
-	texture_t s_white_texture;
+	resource::texture_t s_white_texture;
 
 }
 
@@ -175,7 +175,7 @@ void renderer2D::init()
 	quad_shader->bind();
 
 	s_white_texture.m_is_parent = true;
-	s_white_texture.m_is_deleted = new bool(false);
+	s_white_texture.m_parent_data = new resource::texture_t::parent_data_t{ .is_deleted = false, .flip_verticaly = false };
 	s_white_texture.m_dimensions = { 1, 1 };
 	s_white_texture.m_coords = default_texture_coords();
 
@@ -362,7 +362,7 @@ void renderer2D::delete_texture(uint32_t tex_id)
 	glDeleteTextures(1, &tex_id);
 }
 
-const renderer2D::texture_t& renderer2D::white_texture()
+const resource::texture_t& renderer2D::white_texture()
 {
 	return s_white_texture;
 }

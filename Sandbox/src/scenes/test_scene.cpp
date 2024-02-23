@@ -4,7 +4,7 @@
 #include "glm/gtx/rotate_vector.hpp"
 #include "core/input.h"
 #include "../components.h"
-
+#include <iostream>
 
 test_scene::test_scene(level_loader_t level0) : m_level0(level0)
 {
@@ -55,6 +55,7 @@ void test_scene::create_obstacle(obstacle_t type, const glm::f32vec2& pos, const
 	game_object_t& obj = create_game_object("Obstacle");
 
 	obj.get<component::transform>().set_data(pos, size);
+
 	switch (type)
 	{
 	case obstacle_t::CIRCLE:
@@ -64,6 +65,7 @@ void test_scene::create_obstacle(obstacle_t type, const glm::f32vec2& pos, const
 		obj.add<component::quad>();
 		break;
 	}
+
 	obj.add<component::rigidBody>(rigid_body);
 }
 
@@ -91,7 +93,7 @@ void test_scene::create_ball(const glm::f32vec2& pos)
 
 		// for different balls use different number from 1.25 between (1, 2)
 
-		rigid_body.velocity *= time::delta_time() / (1 + exp(-2.0f * glm::length(rigid_body.velocity)));
+		//rigid_body.velocity *= time::delta_time() / (1 + exp(-0.01 * glm::length(rigid_body.velocity)));
 		
 		if (mouse_state == data.last_state) {
 			return;
@@ -101,7 +103,7 @@ void test_scene::create_ball(const glm::f32vec2& pos)
 			auto x = glm::length(pos - mouse_pos);
 			auto direction = (pos - mouse_pos) / x;
 
-			rigid_body.velocity = direction * (5.0f / (1 + exp(-x)));
+			rigid_body.velocity = direction * (1.0f / (1 + exp(-x)));
 
 			data.last_state = input::state::RELEASED;
 			return;
@@ -112,6 +114,10 @@ void test_scene::create_ball(const glm::f32vec2& pos)
 			data.last_state = input::state::PRESSED;
 		}
 	});
+
+	game_object_t& obj1 = obj.clone();
+
+	obj1.get<component::transform>().set_position({ 100, 100 });
 }
 
 void test_scene::create_animation(const glm::f32vec2& mouse_pos_in_world, const glm::f32vec2& ball_pos)
@@ -131,7 +137,7 @@ void test_scene::create_goal(const glm::f32vec2& pos, const glm::f32vec2& size)
 	obj.add<component::rigidBody>(collisions::type::IGNORED, 2, 0, glm::f32vec2{ 0, 0 }, true, true);
 
 	obj.add<component::collider_callback>([](game_object_t& obj, game_object_t& collided) {
-			
+		std::cout << "WOW\n";
 	});
 }
 

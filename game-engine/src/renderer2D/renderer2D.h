@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <array>
 #include "shader.h"
-#include "texture_t.h"
+#include "resource/resources.h"
 
 namespace renderer2D
 {
@@ -37,7 +37,7 @@ namespace renderer2D
 	void create_texture(uint32_t& tex_id, uint8_t* data, int width, int height);
 	void delete_texture(uint32_t tex_id);
 
-	const texture_t& white_texture();
+	const resource::texture_t& white_texture();
 	const texture_coords_t& default_texture_coords();
 
 	void flush();

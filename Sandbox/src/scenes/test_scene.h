@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene/scene_t.h"
-#include "renderer2D/texture_t.h"
+#include "resource/resources.h"
 #include "scene/components.h"
 
 class test_scene;
@@ -21,7 +21,7 @@ public:
 
 	virtual void on_load_resources() override;
 	virtual void on_create() override;
-	
+
 
 	void load_level(level_loader_t loader);
 	

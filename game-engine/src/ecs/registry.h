@@ -12,7 +12,6 @@ namespace ecs
 	class registry
 	{
 	public:
-		
 		registry();
 
 		ecs::entity_t create();
@@ -63,7 +62,6 @@ namespace ecs
 		std::span<const ecs::entity_t> entities() const
 		{
 			assure_pool<component_t>();
-
 			return get_pool<component_t>().entities();
 		}
 

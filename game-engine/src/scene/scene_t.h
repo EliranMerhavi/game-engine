@@ -5,6 +5,7 @@
 #include "game_engine.h"
 #include "glm/glm.hpp"
 #include "physics2D/phsyics.h"
+#include "resource/resource_system_t.h"
 
 class game_object_t;
 class scene_t
@@ -34,6 +35,20 @@ public:
 
 	void destroy_game_object(const game_object_t& object);
 
+	void add_resource_search_path(const std::string& path);
+	
+	template<typename t, typename... args_t>
+	void load_resource(const std::string& filename, args_t... args)
+	{
+		m_resource_system.load<t>(filename, std::forward<args_t>(args)...);
+	}
+
+	template<typename t, typename... args_t>
+	t& resource(const std::string& filename)
+	{
+		return m_resource_system.get<t>(filename);
+	}
+
 	glm::f32vec2 to_world_position(const glm::f32vec2& screen_position);
 private:
 	void render_gui();
@@ -42,13 +57,9 @@ private:
 	void calculate_camera_matrix();
 	
 private:
-
-
 	std::unordered_map<ecs::entity_t, game_object_t> m_game_objects;
 	ecs::registry m_registry;
-	phsyics2D_system system;
+	phsyics2D_system m_physics_system;
+	resource_system_t m_resource_system;
 	selected_camera_data_t m_selected_camera_data;
 };
-
-
-

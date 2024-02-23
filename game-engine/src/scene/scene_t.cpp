@@ -10,7 +10,8 @@
 
 scene_t::scene_t() : 
 	m_registry(), 
-	system(*this), 
+	m_physics_system(*this), 
+	m_resource_system(),
 	m_selected_camera_data{.camera_id=(ecs::entity_t)-1}
 {
 	auto main_camera = create_game_object();
@@ -41,6 +42,11 @@ game_object_t& scene_t::create_game_object(const std::string& tag)
 void scene_t::destroy_game_object(const game_object_t& object)
 {
 	m_registry.destroy(object.id());
+}
+
+void scene_t::add_resource_search_path(const std::string& path)
+{
+	m_resource_system.add_search_path(path);
 }
 
 game_object_t& scene_t::get_game_object_by_tag(const std::string& tag)
@@ -115,7 +121,7 @@ void scene_t::update()
 		auto& callback = m_registry.get<component::update_callback>(entity);
 		callback(get_game_object(entity));
 	}
-	system.update();
+	m_physics_system.update();
 }
 
 void scene_t::calculate_camera_matrix()
