@@ -3,6 +3,8 @@
 #include "scene/components.h"
 #include "scene/scene_t.h"
 #include "circCollisions.h"
+#include "rectCircCollisions.h"
+#include "rectCollisions.h"
 
 phsyics2D_system::phsyics2D_system(scene_t& _scene) : m_scene(_scene)
 {

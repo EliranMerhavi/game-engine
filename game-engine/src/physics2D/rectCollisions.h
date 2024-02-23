@@ -7,4 +7,6 @@
 namespace rectCollisions {
 	bool isColliding(game_object_t& A, game_object_t& B);
 	bool linearCollision(game_object_t& A, game_object_t& B, float e);
+	bool rotationalCollision(game_object_t& A, game_object_t& B, float e);
+	
 }

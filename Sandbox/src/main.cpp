@@ -3,17 +3,18 @@
 #include "levels/level0.h"
 #include "scenes/performance_test.h"
 #include "scenes/test_scene.h"
-#include <iostream>
 
 int main(int argc, const char** argv)
 {
-	srand(time(nullptr));
-
+	// srand(time(nullptr));
 
 	config_t config;
 
 	config.vsync = false;
-	config.starting_scene = new test_scene(level0);
+	config.starting_scene = new performance_test();
+
+	config.height = 500;
+	config.width = 1000;
 
 	game_engine::init(config);
 	game_engine::run();

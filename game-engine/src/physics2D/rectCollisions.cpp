@@ -45,15 +45,15 @@ namespace rectCollisions {
 
         //Well, now we actually have the information about what our rectangles are. Great. That took far too long.
         float depth = 0;
-        float returnDepth = std::numeric_limits<float>::max();
+        float returnDepth = 100000000000;
         float maxA, minA, maxB, minB;
         glm::f32vec2 normal;
 
         for (int i = 0; i < 4; i++) {
-            minA = std::numeric_limits<float>::max();
-            minB = std::numeric_limits<float>::max();
-            maxA = -std::numeric_limits<float>::max();
-            maxB = -std::numeric_limits<float>::max();
+            minA = 100000000000;
+            minB = 100000000000;
+            maxA = -100000000000;
+            maxB = -100000000000;
 
             glm::f32vec2 edge = verticesA[i] - verticesA[(i + 1) % 4];
             for (int j = 0; j < 4; j++) {
@@ -73,10 +73,10 @@ namespace rectCollisions {
         }
 
         for (int i = 0; i < 4; i++) {
-            minA = std::numeric_limits<float>::max();
-            minB = std::numeric_limits<float>::max();
-            maxA = -std::numeric_limits<float>::max();
-            maxB = -std::numeric_limits<float>::max();
+            minA = 100000000000;
+            minB = 100000000000;
+            maxA = -100000000000;
+            maxB = -100000000000;
 
             glm::f32vec2 edge = verticesB[i] - verticesB[(i + 1) % 4];
             for (int j = 0; j < 4; j++) {
@@ -93,18 +93,6 @@ namespace rectCollisions {
                 returnDepth = depth;
                 normal = edge;
             }
-        }
-
-        normal = normal / glm::length(normal);
-
-        // At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-        if (glm::dot(normal, posA - posB) > 0) {
-            objA.set_position(posA + returnDepth / 2 * normal);
-            objB.set_position(posB - returnDepth / 2 * normal);
-        }
-        else {
-            objA.set_position(posA - returnDepth / 2 * normal);
-            objB.set_position(posB + returnDepth / 2 * normal);
         }
 
         return true;
@@ -140,14 +128,14 @@ namespace rectCollisions {
         float cB = cos(angleB);
         float sA = sin(angleA);
         float sB = sin(angleB);
-        verticesA[0] = { posA.x + wA / 2 * cA - hA / 2 * sA, posA.y + wA / 2 * sA + hA / 2 * cA };
-        verticesA[1] = { posA.x - wA / 2 * cA - hA / 2 * sA, posA.y + wA / 2 * sA + hA / 2 * cA };
-        verticesA[2] = { posA.x - wA / 2 * cA - hA / 2 * sA, posA.y - wA / 2 * sA + hA / 2 * cA };
-        verticesA[3] = { posA.x + wA / 2 * cA - hA / 2 * sA, posA.y - wA / 2 * sA + hA / 2 * cA };
-        verticesB[0] = { posB.x + wB / 2 * cB - hB / 2 * sB, posB.y + wB / 2 * sB + hB / 2 * cB };
-        verticesB[1] = { posB.x - wB / 2 * cB - hB / 2 * sB, posB.y + wB / 2 * sB + hB / 2 * cB };
-        verticesB[2] = { posB.x - wB / 2 * cB - hB / 2 * sB, posB.y - wB / 2 * sB + hB / 2 * cB };
-        verticesB[3] = { posB.x + wB / 2 * cB - hB / 2 * sB, posB.y - wB / 2 * sB + hB / 2 * cB };
+        verticesA[0] = { posA.x + wA / 2 * cA - hA/2 * sA , posA.y + wA/2 * sA + hA / 2 * cA };
+        verticesA[1] = { posA.x - wA / 2 * cA - hA/2 * sA , posA.y - wA/2 * sA + hA / 2 * cA };
+        verticesA[2] = { posA.x - wA / 2 * cA + hA/2 * sA , posA.y - wA/2 * sA - hA / 2 * cA };
+        verticesA[3] = { posA.x + wA / 2 * cA + hA/2 * sA , posA.y + wA/2 * sA - hA / 2 * cA };
+        verticesB[0] = { posB.x + wB / 2 * cB - hB / 2 * sB , posB.y + wB / 2 * sB + hB / 2 * cB };
+        verticesB[1] = { posB.x - wB / 2 * cB - hB / 2 * sB , posB.y - wB / 2 * sB + hB / 2 * cB };
+        verticesB[2] = { posB.x - wB / 2 * cB + hB / 2 * sB , posB.y - wB / 2 * sB - hB / 2 * cB };
+        verticesB[3] = { posB.x + wB / 2 * cB + hB / 2 * sB , posB.y + wB / 2 * sB - hB / 2 * cB };
 
         //Well, now we actually have the information about what our rectangles are. Great. That took far too long.
         float depth = 0;
@@ -193,16 +181,16 @@ namespace rectCollisions {
                 if (projB > maxB) { maxB = projB; }
                 if (projB < minB) { minB = projB; }
             }
-            depth = std::min(maxB - minA, maxA - minB);
+            depth = std::min(maxB - minA, maxA - minB)/glm::length(edge);
             if (depth <= 0) { return false; }
             if (depth < returnDepth) {
                 returnDepth = depth;
                 normal = edge;
             }
         }
-
+        normal = normal / glm::length(normal);
         // At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-        if (glm::dot(normal, posA - posB) > 0) {
+        if (glm::dot(normal, posB - posA) < 0) {
             objA.set_position(posA + returnDepth / 2 * normal);
             objB.set_position(posB - returnDepth / 2 * normal);
         }
@@ -214,7 +202,7 @@ namespace rectCollisions {
         auto& physA = A.get<component::rigidBody>();
         auto& physB = B.get<component::rigidBody>();
         // Once we've seperated, we can go about the collision resolution
-        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass, 1 / physB.mass);
+        float j = (1 + e) * glm::dot(physB.velocity - physA.velocity, normal) / (1 / physA.mass + 1 / physB.mass);
         physA.velocity = physA.velocity + j / physA.mass * normal;
         physB.velocity = physB.velocity - j / physB.mass * normal;
 

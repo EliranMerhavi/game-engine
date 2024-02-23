@@ -3,11 +3,9 @@
 
 namespace collisions
 {
-	enum class type 
-	{
+	enum type {
+		IGNORED,
 		LINEAR,
-		ROTATIONAL,
-		IGNORED
+		ROTATIONAL
 	};
 }
-

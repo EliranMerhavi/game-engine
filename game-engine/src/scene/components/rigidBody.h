@@ -10,8 +10,11 @@ namespace component {
         float omega;
         glm::f32vec2 velocity;
         glm::f32vec2 acceleration;
-        std::string type;
-        float moment;
+
+        float restitution;
+        
+        bool static_position;
+        bool static_rotation;
 
         collisions::type collision_type;
 
@@ -19,5 +22,6 @@ namespace component {
                   float restitution=1);
 
     };
+    
 }
 

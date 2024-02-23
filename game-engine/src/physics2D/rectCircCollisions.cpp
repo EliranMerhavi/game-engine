@@ -7,13 +7,13 @@ namespace rectCircCollisions {
 		auto& rect = A.get<component::transform>();
 		auto& circ = B.get<component::transform>();
 
-		float r = circ.scale().x;
+		float r = circ.scale().x/2;
 		glm::f32vec2 posCirc = circ.position();
 
 		glm::f32vec2 rectDims = rect.scale();
 		glm::f32vec2 posRect = rect.position();
-		float w = rectDims.x;
-		float h = rectDims.y;
+		float w = rectDims.x/2;
+		float h = rectDims.y/2;
 		float ang = rect.rotation() * M_PI / 180;
 
 		float cA = cos(ang);
@@ -98,17 +98,6 @@ namespace rectCircCollisions {
 			returnDepth = depth;
 			normal = edge;
 		}
-
-		// Rectt this point we know there's been a collision, the axis to move on, and the depth of the penetration.
-		if (glm::dot(normal, posRect - posCirc) > 0) {
-			rect.set_position(posRect + returnDepth / 2 * normal);
-			circ.set_position(posCirc - returnDepth / 2 * normal);
-		}
-		else {
-			rect.set_position(posRect - returnDepth / 2 * normal);
-			circ.set_position(posCirc + returnDepth / 2 * normal);
-		}
-
 		return true;
 	}
 
@@ -116,8 +105,9 @@ namespace rectCircCollisions {
 	{
 		auto& rect = A.get<component::transform>();
 		auto& circ = B.get<component::transform>();
-
-		float r = circ.scale().x;
+		auto& physA = A.get<component::rigidBody>();
+		auto& physB = B.get<component::rigidBody>();
+		float r = circ.scale().x/2;
 		glm::f32vec2 posCirc = circ.position();
 
 		glm::f32vec2 rectDims = rect.scale();
@@ -131,9 +121,9 @@ namespace rectCircCollisions {
 
 		glm::f32vec2 vertices[4];
 		vertices[0] = { posRect.x + w / 2 * cA - h / 2 * sA, posRect.y + w / 2 * sA + h / 2 * cA };
-		vertices[1] = { posRect.x - w / 2 * cA - h / 2 * sA, posRect.y + w / 2 * sA + h / 2 * cA };
-		vertices[2] = { posRect.x - w / 2 * cA - h / 2 * sA, posRect.y - w / 2 * sA + h / 2 * cA };
-		vertices[3] = { posRect.x + w / 2 * cA - h / 2 * sA, posRect.y - w / 2 * sA + h / 2 * cA };
+		vertices[1] = { posRect.x - w / 2 * cA - h / 2 * sA, posRect.y - w / 2 * sA + h / 2 * cA };
+		vertices[2] = { posRect.x - w / 2 * cA + h / 2 * sA, posRect.y - w / 2 * sA - h / 2 * cA };
+		vertices[3] = { posRect.x + w / 2 * cA + h / 2 * sA, posRect.y + w / 2 * sA - h / 2 * cA };
 
 		// We use the seperating axis theorem, this time with one additional axis: the one between the center of the circle and the closest vertex.
 		// How to we determine what points on the circle need to be projected? We take the center, and add the direction of the seperating axis. Sadly, this means we have to normalise right from the get go.
@@ -141,7 +131,7 @@ namespace rectCircCollisions {
 		float returnDepth = std::numeric_limits<float>::max();
 		float maxRect, minRect, maxCirc, minCirc;
 		glm::f32vec2 normal;
-
+		
 		for (int i = 0; i < 4; i++) {
 			minRect = std::numeric_limits<float>::max();
 			minCirc = std::numeric_limits<float>::max();
@@ -177,6 +167,10 @@ namespace rectCircCollisions {
 			}
 		}
 		// Now the check for the final axis: that between the center of the circle and nearest vertex.
+		minRect = std::numeric_limits<float>::max();
+		minCirc = std::numeric_limits<float>::max();
+		maxRect = -std::numeric_limits<float>::max();
+		maxCirc = -std::numeric_limits<float>::max();
 		glm::f32vec2 nearestVertex;
 		float dist = std::numeric_limits<float>::max();
 		for (int i = 0; i < 4; i++) {
@@ -184,7 +178,8 @@ namespace rectCircCollisions {
 			if (d < dist) { nearestVertex = vertices[i];  dist = d; }
 		}
 
-		glm::f32vec2 edge = nearestVertex - posCirc / dist;
+		glm::f32vec2 edge = (-nearestVertex + posCirc) / dist;
+		
 		for (int j = 0; j < 4; j++) {
 			float projRect = glm::dot(vertices[j], edge);
 			if (projRect > maxRect) { maxRect = projRect; }
@@ -208,16 +203,44 @@ namespace rectCircCollisions {
 			returnDepth = depth;
 			normal = edge;
 		}
-
+		normal = normal / glm::length(normal);
+		
 		// At this point we know there's been a collision, the axis to move on, and the depth of the penetration.
 		if (glm::dot(normal, posRect - posCirc) > 0) {
-			rect.set_position(posRect + returnDepth / 2 * normal);
-			circ.set_position(posCirc - returnDepth / 2 * normal);
+			if (physA.static_position) {
+				circ.set_position(posCirc - returnDepth * normal);
+			}
+			else if (physB.static_position) {
+				rect.set_position(posRect + returnDepth * normal);
+			}
+			else {
+				rect.set_position(posRect + returnDepth / 2 * normal);
+				circ.set_position(posCirc - returnDepth / 2 * normal);
+			}
+			
 		}
 		else {
-			rect.set_position(posRect - returnDepth / 2 * normal);
-			circ.set_position(posCirc + returnDepth / 2 * normal);
+			if (physA.static_position) {
+				circ.set_position(posCirc + returnDepth * normal);
+			}
+			else if (physB.static_position) {
+				rect.set_position(posRect - returnDepth * normal);
+			}
+			else {
+				rect.set_position(posRect - returnDepth / 2 * normal);
+				circ.set_position(posCirc + returnDepth / 2 * normal);
+			}
 		}
+
+		float invMA, invMB;
+		if (physA.static_position) {
+			invMA = 0;
+		}
+		else { invMA = 1 / physA.mass; }
+		if (physB.static_position) {
+			invMB = 0;
+		}
+		else { invMB = 1 / physB.mass; }
 
 		// Resolve as usual
 	
