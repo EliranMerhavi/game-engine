@@ -1,3 +1,7 @@
+local includes = "game-engine/dependencies/include"
+local libs     = "game-engine/dependencies/libs"
+
+
 workspace "game-engine"
     startproject "Sandbox"   
     configurations { "debug", "release" }
@@ -15,10 +19,15 @@ project "game-engine"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
-    files { "%{prj.location}/src/**.h", "%{prj.location}/src/**.cpp" }
+    files { 
+        "%{prj.location}/src/**.h", 
+        "%{prj.location}/src/**.cpp", 
+        includes .. "/**.h", 
+        includes .. "/**.cpp"
+    }
 
-    includedirs { "dependencies/include/", "game-engine/src" }
-    libdirs {"dependencies/libs/", "bin/"}
+    includedirs { includes, "game-engine/src" }
+    libdirs { libs, "bin/"}
 
     links {"opengl32.lib", "glfw3.lib", "glew32s.lib"}
 
@@ -29,6 +38,9 @@ project "game-engine"
     filter "configurations:release"
         defines { "NDEBUG" }
         optimize "On"
+
+    filter ("files:" .. includes .. "/**.cpp")
+        flags {"NoPCH"}
 
 project "Sandbox"
     kind "ConsoleApp"
@@ -44,8 +56,8 @@ project "Sandbox"
     dependson "game-engine"
     links {"game-engine.lib"}
 
-    includedirs { "dependencies/include/", "game-engine/src" }
-    libdirs { "dependencies/libs/", "%{cfg.targetdir}" }
+    includedirs { includes, "game-engine/src" }
+    libdirs { libs, "%{cfg.targetdir}" }
 
     filter "configurations:debug"
         defines { "DEBUG" }
