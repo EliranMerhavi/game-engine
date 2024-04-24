@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "components_pool.h"
+#include "../scene/components.h"
 
 ecs::components_pool::components_pool() : m_components(), m_rev_index_table(), m_index_table() 
 {
@@ -23,15 +24,21 @@ void ecs::components_pool::copy(ecs::entity_t from, ecs::entity_t to)
 void ecs::components_pool::remove(ecs::entity_t entity)
 {
 	assert(has(entity));
-
+	
 	int i = m_index_table[entity];
 
 	m_components[i] = m_components.back();
 	m_index_table[m_rev_index_table.back()] = i;
+	std::swap(m_rev_index_table[i], m_rev_index_table.back());
 
 	m_components.pop_back();
 	m_rev_index_table.pop_back();
 	m_index_table.erase(entity);
+}
+
+void ecs::components_pool::update()
+{
+
 }
 
 std::span<const ecs::entity_t> ecs::components_pool::entities() const
@@ -43,4 +50,3 @@ size_t ecs::components_pool::size() const
 {
 	return m_components.size();
 }
-

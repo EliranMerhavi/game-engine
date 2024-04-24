@@ -4,7 +4,6 @@
 #include "components/transform.h"
 #include "components/tag.h"
 
-#include "components/render_callback.h"
 #include "components/update_callback.h"
 
 

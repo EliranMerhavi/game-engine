@@ -20,19 +20,24 @@ ecs::entity_t ecs::registry::clone(ecs::entity_t entity)
 	for (auto& [hash_code, comp_pool] : m_pools) {
 		if (comp_pool.has(entity)) {
 			comp_pool.copy(entity, res);
-			if (hash_code == typeid(component::update_callback).hash_code()) {
-				std::cout << std::boolalpha << comp_pool.has(res);
-			}
 		}
 	}
 	return res;
 }
 
+void ecs::registry::update()
+{
+	for (auto& [hash_code, comp_pool] : m_pools) {
+		comp_pool.update();	
+	}
+}
+
 void ecs::registry::destroy(ecs::entity_t entity)
 {
 	for (auto& [hash_code, comp_pool] : m_pools) {
-		if (comp_pool.has(entity))
+		if (comp_pool.has(entity)) {
 			comp_pool.remove(entity);
+		}
 	}
 }
 

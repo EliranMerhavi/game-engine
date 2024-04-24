@@ -12,7 +12,6 @@ resource::texture_t::texture_t() : m_parent_data(new parent_data_t{ .is_deleted 
 resource::texture_t::texture_t(bool flip_verticaly) :
 	m_renderer_id(), m_dimensions(), m_coords(renderer2D::default_texture_coords()), m_is_parent(true), m_parent_data(new parent_data_t{ .is_deleted = false, .flip_verticaly = flip_verticaly })
 {
-
 }
 
 resource::texture_t::texture_t(uint32_t texture_id, glm::f32vec2 dimensions, const renderer2D::texture_coords_t& coords, parent_data_t* parent_data)

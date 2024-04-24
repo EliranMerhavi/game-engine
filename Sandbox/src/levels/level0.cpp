@@ -2,7 +2,7 @@
 
 void level0(test_scene& scene)
 {
-	int width = game_engine::config::window_width(), height = game_engine::config::window_height();
+	const auto& [width, height] = game_engine::config::window_size();
 
 	scene.create_ball({ 200, height / 2 });
 	scene.create_goal({ width - 100, height / 2 }, { 20 , 20 });

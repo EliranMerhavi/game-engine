@@ -7,6 +7,8 @@
 #include "renderer2D/renderer2D.h"
 
 
+#include "scene/components.h"
+
 namespace game_engine
 {
     bool running;
@@ -18,13 +20,14 @@ namespace game_engine
 void game_engine::init(const config_t& config)
 {
     assert(config.starting_scene != nullptr);
-    assert(config.width > 0 && config.height > 0);
-    
+    const auto& [window_width, window_height] = config.window_size;
     config_data = config;
     
     assert(glfwInit() && "error when calling glfwInit()");
     
-    glfw_window = glfwCreateWindow(config_data.width, config_data.height, config_data.window_title.c_str(), nullptr, nullptr);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    glfw_window = glfwCreateWindow(window_width, window_height, config_data.window_title.c_str(), nullptr, nullptr);
 
     assert(glfw_window && "error on glfwCreateWindow()");
 
@@ -50,13 +53,21 @@ void game_engine::init(const config_t& config)
         }, 0);
 #endif
 
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    
     glfwSetWindowCloseCallback(glfw_window, [](GLFWwindow* window) {
         running = false;
     });
 
     input::init();
     renderer2D::init();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(glfw_window, true);
+    ImGui_ImplOpenGL3_Init("#version 410");
+
     config::set_vsync(config_data.vsync);
     set_scene(*config.starting_scene);
 }
@@ -65,9 +76,10 @@ void game_engine::run()
 {
     time_step_t previous_time = time::current();
     running = true;
+    
     while (running)
     {
-        renderer2D::clear();
+        renderer2D::begin();
 
         time_step_t current_time = time::current();
         time::s_delta_time = current_time - previous_time;
@@ -78,7 +90,8 @@ void game_engine::run()
 
         current_scene->update();
         current_scene->render();
-        renderer2D::flush();
+        current_scene->gui_render();
+        renderer2D::end();
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
     }
@@ -99,14 +112,9 @@ GLFWwindow* game_engine::window()
     return glfw_window;
 }
 
-int game_engine::config::window_width()
+const std::pair<uint32_t, uint32_t>& game_engine::config::window_size()
 {
-    return config_data.width;
-}
-
-int game_engine::config::window_height()
-{
-    return config_data.height;
+    return config_data.window_size;
 }
 
 void game_engine::config::set_vsync(bool vsync)

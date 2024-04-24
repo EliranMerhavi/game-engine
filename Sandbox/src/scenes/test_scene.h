@@ -7,6 +7,7 @@
 class test_scene;
 
 using level_loader_t = void(*)(test_scene& scene);
+
 using obstacle_t = enum {
 	CIRCLE,
 	RECT
@@ -14,13 +15,13 @@ using obstacle_t = enum {
 
 class test_scene : public scene_t
 {
-	
 public:
 	test_scene(level_loader_t level0);
 	~test_scene();
 
 	virtual void on_load_resources() override;
 	virtual void on_create() override;
+	virtual void gui_render() override;
 
 
 	void load_level(level_loader_t loader);

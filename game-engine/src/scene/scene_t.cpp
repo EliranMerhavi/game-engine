@@ -42,6 +42,7 @@ game_object_t& scene_t::create_game_object(const std::string& tag)
 void scene_t::destroy_game_object(const game_object_t& object)
 {
 	m_registry.destroy(object.id());
+	m_game_objects.erase(object.id());
 }
 
 void scene_t::add_resource_search_path(const std::string& path)
@@ -64,7 +65,6 @@ game_object_t& scene_t::get_game_object(ecs::entity_t id)
 	return m_game_objects.at(id);
 }
 
-
 game_object_t& scene_t::clone_game_object(ecs::entity_t id)
 {
 	ecs::entity_t cloned_id = m_registry.clone(id);
@@ -74,53 +74,50 @@ game_object_t& scene_t::clone_game_object(ecs::entity_t id)
 
 glm::f32vec2 scene_t::to_world_position(const glm::f32vec2& screen_position)
 {
+	const auto& [window_width, window_height] = game_engine::config::window_size();
 	calculate_camera_matrix();
 
 	glm::f32vec2 res = screen_position;
 
-	res.x = -1 + 2 * res.x / game_engine::config::window_width();
-	res.y =  1 - 2 * res.y / game_engine::config::window_height();
+	res.x = -1 + 2 * res.x / window_width;
+	res.y =  1 - 2 * res.y / window_height;
 	
 	res = m_selected_camera_data.inverse_camera_matrix_cache * glm::f32vec4(res, 0, 1);
 	
 	return res;
 }
 
-void scene_t::render_gui()
+void scene_t::gui_render()
 {
 }
 
 void scene_t::render()
 {
 	calculate_camera_matrix();
-
 	renderer2D::set_camera(m_selected_camera_data.camera_matrix_cache);
 
 	for (ecs::entity_t entity : m_registry.entities<component::quad>()) {
 		auto& transform = m_registry.get<component::transform>(entity);
-		auto& quad = m_registry.get<component::quad>(entity);
+		auto& quad		= m_registry.get<component::quad>(entity);
 		renderer2D::quad(transform.matrix(), quad.color(), quad.texture().id(), quad.texture().coords());
 	}
 	
 	for (ecs::entity_t entity : m_registry.entities<component::circle>()) {
 		auto& transform = m_registry.get<component::transform>(entity);
-		auto& circle = m_registry.get<component::circle>(entity);
+		auto& circle    = m_registry.get<component::circle>(entity);
 		renderer2D::circle(transform.matrix(), circle.color());
 	}
-	
-	for (ecs::entity_t entity : m_registry.entities<component::render_callback>()) {
-		auto& callback = m_registry.get<component::render_callback>(entity);
-		callback(get_game_object(entity));
-	}
-
 }
 
 void scene_t::update()
 {
 	for (ecs::entity_t entity : m_registry.entities<component::update_callback>()) {
+		if (!m_registry.has<component::update_callback>(entity))
+			continue;
 		auto& callback = m_registry.get<component::update_callback>(entity);
 		callback(get_game_object(entity));
 	}
+	// m_registry.update();
 	m_physics_system.update();
 }
 

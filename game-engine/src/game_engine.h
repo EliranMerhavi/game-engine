@@ -14,8 +14,7 @@ namespace game_engine
 
 	namespace config
 	{
-		int window_width();
-		int window_height();
+		const std::pair<uint32_t, uint32_t>& window_size();
 		void set_vsync(bool vsync);
 		const config_t& get_config();		
 	}

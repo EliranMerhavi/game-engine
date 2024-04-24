@@ -1,9 +1,9 @@
 #pragma once
 
-
 #include "ecs/registry.h"
 #include "game_engine.h"
 #include "glm/glm.hpp"
+
 #include "physics2D/phsyics.h"
 #include "resource/resource_system_t.h"
 
@@ -23,6 +23,7 @@ public:
 	scene_t();
 	virtual ~scene_t();
 
+	virtual void gui_render() = 0;
 	virtual void on_load_resources() = 0;
 	virtual void on_create() = 0;
 
@@ -51,7 +52,6 @@ public:
 
 	glm::f32vec2 to_world_position(const glm::f32vec2& screen_position);
 private:
-	void render_gui();
 	void render();
 	void update();
 	void calculate_camera_matrix();

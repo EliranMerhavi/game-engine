@@ -16,8 +16,8 @@ namespace ecs
 
 		ecs::entity_t create();
 		ecs::entity_t clone(ecs::entity_t entity);
-
 		void destroy(ecs::entity_t entity);
+		void update();
 	
 		template<typename component_t>
 		void copy(ecs::entity_t from, ecs::entity_t to)
@@ -54,7 +54,6 @@ namespace ecs
 		std::vector<component_t> data() const
 		{
 			assure_pool<component_t>();
-			
 			return get_pool<component_t>().data<component_t>();
 		}
 
@@ -95,6 +94,5 @@ namespace ecs
 
 		mutable std::unordered_map<size_t, components_pool> m_pools;
 		ecs::entity_t m_entity_counter; // TODO: system for entities
-		
 	};
 }

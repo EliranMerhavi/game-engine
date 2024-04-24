@@ -49,7 +49,6 @@ namespace resource
 		parent_data_t* m_parent_data;
 
 		friend void renderer2D::init();
-
 	};
 
 }

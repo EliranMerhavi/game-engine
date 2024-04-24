@@ -16,8 +16,7 @@ void test_scene::on_load_resources()
 
 void test_scene::on_create()
 {
-	int width = game_engine::config::window_width(),
-		height = game_engine::config::window_height();
+	const auto& [width, height] = game_engine::config::window_size();
 
 	game_object_t camera = create_game_object();
 	
@@ -34,6 +33,11 @@ void test_scene::on_create()
 	add_border({ width, height / 2.0f }, { 50, height });
 	add_border({ width / 2.0f, 0 }, { width, 50 });
 	add_border({ width / 2.0f, height }, { width, 50 });
+}
+
+void test_scene::gui_render()
+{
+
 }
 
 void test_scene::load_level(level_loader_t loader)
