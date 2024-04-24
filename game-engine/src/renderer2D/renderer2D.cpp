@@ -31,7 +31,6 @@ namespace renderer2D
 	const size_t max_quads_vertices{ max_quads_count * 4 };
 	const size_t max_quads_indices{ max_quads_count * 6 };
 	
-	
 	const size_t max_lines_count{ 20000 };
 	const size_t max_lines_vertices{ max_lines_count * 2 };
 	const size_t max_lines_indices{ max_lines_count * 2 };
@@ -48,12 +47,14 @@ namespace renderer2D
 	uint32_t quad_vbo, quad_ibo, quad_vao,
 			 circle_vbo, circle_ibo, circle_vao,
 			 line_vbo, line_vao;
-	
+
 	glm::f32vec4 s_quad_vertices[4];
 	texture_coords_t s_texture_coords;
 	uint32_t s_textures[32];
 	resource::texture_t s_white_texture;
 
+	void flush();
+	void clear();
 }
 
 void renderer2D::set_camera(const glm::f32mat4& camera)
@@ -68,7 +69,7 @@ void renderer2D::init()
 {
 	if (is_initialized)
 		throw std::exception("renderer2D has already been initialized");
-	
+
 	glEnable(GL_TEXTURE_2D);
 	
 	quad_shader = std::make_unique<opengl::shader>("assets/shaders/quad_vertex.shader", "assets/shaders/quad_fragment.shader");
@@ -112,7 +113,6 @@ void renderer2D::init()
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, sizeof(quad_vertex::tex_index) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(quad_vertex), (const void*)offsetof(quad_vertex, tex_index));
 
-		
 	int32_t* samplers = new int32_t[max_tex_count];
 
 	for (int i = 0; i < max_tex_count; i++)
@@ -137,7 +137,6 @@ void renderer2D::init()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, sizeof(line_vertex::color) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(line_vertex), (const void*)offsetof(line_vertex, color));
 
-
 	// ------------------------------------------
 	// initialization of the circle vao
 	// ------------------------------------------
@@ -151,7 +150,6 @@ void renderer2D::init()
 	glCreateBuffers(1, &circle_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle_ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, max_circles_indices * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, sizeof(circle_vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(circle_vertex), (const void*)0);
@@ -295,10 +293,10 @@ void renderer2D::quad(float x, float y, float w, float h)
 void renderer2D::quad(const glm::f32vec2& position, const glm::f32vec2& dimensions)
 {
 	glm::f32mat4 transform(1.0f);
-	
-	transform = glm::translate(transform, glm::f32vec3(position, 0.0f));
-	transform = glm::scale(transform, glm::f32vec3(dimensions, 1.0f));
 
+	transform = glm::translate(transform, glm::f32vec3{ position, 0.0f });
+	transform = glm::scale(transform, glm::f32vec3{ dimensions, 1.0f });
+	
 	renderer2D::quad(transform);
 }
 
@@ -338,7 +336,6 @@ void renderer2D::quad(const glm::f32mat4& transform, const glm::f32vec4& color, 
 	}
 }
 
-
 void renderer2D::create_texture(uint32_t& tex_id, uint8_t* data, int width, int height)
 {
 	quad_shader->bind();
@@ -370,6 +367,32 @@ const resource::texture_t& renderer2D::white_texture()
 const renderer2D::texture_coords_t& renderer2D::default_texture_coords()
 {
 	return s_texture_coords;
+}
+
+void renderer2D::begin()
+{
+	const auto& [window_width, window_height] = game_engine::config::window_size();
+	renderer2D::clear();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	
+	ImGui::SetNextWindowPos({ 0, 0 });
+	ImGui::SetNextWindowSize({ (float)window_width, (float)window_height });
+	ImGui::SetNextWindowScroll({ 0, 0 });
+
+	ImGui::Begin("name", (bool*)true, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+	
+}
+
+void renderer2D::end()
+{
+	renderer2D::flush();
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void renderer2D::flush()

@@ -6,6 +6,10 @@
 #include "shader.h"
 #include "resource/resources.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 namespace renderer2D
 {
 	void init();
@@ -32,13 +36,15 @@ namespace renderer2D
 	void quad(const glm::f32mat4& transform);
 	void quad(const glm::f32mat4& transform, const glm::f32vec4& color, uint32_t tex_id, const std::array<glm::f32vec2, 4>& tex_coords);
 
-
-
 	void create_texture(uint32_t& tex_id, uint8_t* data, int width, int height);
 	void delete_texture(uint32_t tex_id);
 
 	const resource::texture_t& white_texture();
 	const texture_coords_t& default_texture_coords();
+
+	void begin();
+	void end();
+
 
 	void flush();
 	void clear();

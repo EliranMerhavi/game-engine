@@ -2,24 +2,38 @@
 #include "scene/game_object_t.h"
 #include "scene/components.h"
 #include "core/input.h"
+#include <iostream>
 
 #define SIZE 10
 #define rand_value() ((rand() % 255) / 255.0f)
 
-performance_test::performance_test()
+performance_test::performance_test() : count(0)
 {
+}
+
+void performance_test::gui_render()
+{
+	const auto [width,		height		] = ImGui::GetWindowSize();
+	const auto [text_width, text_height	] = ImGui::CalcTextSize("hello    ");
+
+	ImGui::SetCursorPos({ width - 2 * text_width, height - text_height });
+	ImGui::Text("hello %d", count);
+}
+
+void performance_test::on_remove_quad()
+{
+	count++;
 }
 
 void performance_test::on_load_resources()
 {
 	add_resource_search_path("assets/images/");
 	load_resource<resource::texture_t>("image.png", false);
-
 }
 
 void performance_test::on_create()
 {
-	game_object_t camera = create_game_object();
+	game_object_t& camera = create_game_object();
 	
 	camera.add<component::camera>(-500, 500, -500, 500);
 	camera.get<component::camera>().select_camera();
@@ -48,7 +62,7 @@ void performance_test::on_create()
 		transform.set_position(transform.position() + update);
 	});
 	
-	int n = 1250, m = 2;
+	int n = 10, m = 10;
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < m; j++) {
@@ -57,16 +71,17 @@ void performance_test::on_create()
 	}
 }
 
+#define rand_value() (1.0f)
+
 void performance_test::create_object(const glm::f32vec2& pos)
 {
-	game_object_t obj = create_game_object();
+	game_object_t& obj = create_game_object();
 	auto& tex1 = resource<resource::texture_t>("image.png");
 
 	obj.get<component::transform>().set_data(pos, { SIZE, SIZE });
 	obj.add<component::quad>(rand_value(), rand_value(), rand_value(), 1.0f, &tex1);
-	
 	obj.add<component::update_callback>([](game_object_t& obj) {
-		auto* scene = obj.scene();
+		auto* scene = (performance_test*)obj.scene();
 		auto& transform = obj.get<component::transform>();
 		
 		auto mouse_pos = scene->to_world_position(input::mouse_position());
@@ -75,12 +90,11 @@ void performance_test::create_object(const glm::f32vec2& pos)
 			return;
 		}
 
-		if (glm::length(mouse_pos - transform.position()) < SIZE) {
-			scene->destroy_game_object(obj);
+		if (glm::length(mouse_pos - transform.position()) >= SIZE) {
+			return;
 		}
 
+		scene->destroy_game_object(obj);
+		scene->on_remove_quad();
 	});
-
 }
-
-
