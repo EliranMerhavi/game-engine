@@ -18,4 +18,4 @@ if you are interested in using this game engine you need to put in the folder de
 and the following file to put in dependencies/shared-libs/
 * sndfile.dll [https://github.com/libsndfile/libsndfile/releases/tag/1.2.2]
 
-i left some random project in the sandbox library for you to learn how to use the game engine
+i left some random project in the Sandbox folder for you to learn how to use the game engine
