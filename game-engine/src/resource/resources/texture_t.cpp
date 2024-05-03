@@ -19,13 +19,15 @@ resource::texture_t::texture_t(uint32_t texture_id, glm::f32vec2 dimensions, con
 {
 }
 
-void resource::texture_t::load(const void* file_data, size_t length)
+void resource::texture_t::load(const load_args_t& args)
 {
+	const auto& [filepath, file_data, file_size] = args;
+
 	stbi_set_flip_vertically_on_load(m_parent_data->flip_verticaly);
 	// load and generate the texture
 	int32_t width, height, nrChannels;
 
-	uint8_t* data = stbi_load_from_memory((stbi_uc*)file_data, length, &width, &height, &nrChannels, 4);
+	uint8_t* data = stbi_load_from_memory((stbi_uc*)file_data, file_size, &width, &height, &nrChannels, 4);
 
 	assert(data && "failed to load texture");
 

@@ -26,7 +26,7 @@ namespace resource
 		texture_t(bool flip_verticaly);
 		~texture_t();
 
-		void load(const void* file_data, size_t length) override;
+		void load(const load_args_t& args) override;
 
 		texture_t& operator=(const texture_t& other);
 

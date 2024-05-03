@@ -4,10 +4,13 @@
 #include "core/time.h"
 #include "scene/scene_t.h"
 #include "core/input.h"
-#include "renderer2D/renderer2D.h"
 
+#include "renderer2D/renderer2D.h"
+#include "audio/audio.h"
 
 #include "scene/components.h"
+
+#include "util/thread_pool/thread_pool.h"
 
 namespace game_engine
 {
@@ -53,13 +56,15 @@ void game_engine::init(const config_t& config)
         }, 0);
 #endif
 
-    
     glfwSetWindowCloseCallback(glfw_window, [](GLFWwindow* window) {
         running = false;
     });
 
+    thread_pool::init();
+    audio::init();
     input::init();
     renderer2D::init();
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -97,6 +102,8 @@ void game_engine::run()
     }
 
     renderer2D::shutdown();
+    audio::shutdown();
+    thread_pool::shutdown();
     glfwTerminate();
 }
 

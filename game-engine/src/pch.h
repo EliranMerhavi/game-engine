@@ -20,6 +20,10 @@
 #include <memory>
 #include <chrono>
 
+#include "OpenAL/al.h"
+#include "OpenAL/alc.h"
+#include "OpenAL/efx.h"
+
 #define GLEW_STATIC
 #include "GL/glew.h"
 

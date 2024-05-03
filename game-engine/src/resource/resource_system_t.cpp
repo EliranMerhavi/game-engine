@@ -9,19 +9,19 @@ resource_system_t::resource_system_t()
 
 resource_system_t::~resource_system_t()
 {
-	std::vector<std::string> filepaths;
-	filepaths.reserve(m_resources.size());
-	for (const auto& [filepath, _] : m_resources) {
-		filepaths.emplace_back(filepath);
-	}
-	for (const auto& filepath : filepaths) {
-		close(filepath);
+	for (const auto& [filepath, resource_holder] : m_resources) {
+		delete resource_holder.second;
 	}
 }
 
 void resource_system_t::add_search_path(const std::string& path)
 {
 	m_filepaths.emplace_back(path);
+}
+
+bool resource_system_t::has(const std::string& filename) const
+{
+	return m_resources.count(filename);
 }
 
 void resource_system_t::close(const std::string& filename)
