@@ -97,7 +97,7 @@ void test_scene::create_ball(const glm::f32vec2& pos)
 
 		// for different balls use different number from 1.25 between (1, 2)
 
-		//rigid_body.velocity *= time::delta_time() / (1 + exp(-0.01 * glm::length(rigid_body.velocity)));
+		// rigid_body.velocity *= time::delta_time() / (1 + exp(-0.01 * glm::length(rigid_body.velocity)));
 		
 		if (mouse_state == data.last_state) {
 			return;

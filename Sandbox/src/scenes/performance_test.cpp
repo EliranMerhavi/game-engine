@@ -1,7 +1,10 @@
 #include "performance_test.h"
 #include "scene/game_object_t.h"
 #include "scene/components.h"
+
 #include "core/input.h"
+#include "audio/audio.h"
+
 #include <iostream>
 
 #define SIZE 10
@@ -13,11 +16,16 @@ performance_test::performance_test() : count(0)
 
 void performance_test::gui_render()
 {
-	const auto [width,		height		] = ImGui::GetWindowSize();
-	const auto [text_width, text_height	] = ImGui::CalcTextSize("hello    ");
+	const auto [ width	   , height		 ] = ImGui::GetWindowSize();
+	const auto [ text_width, text_height ] = ImGui::CalcTextSize("hello    ");
 
 	ImGui::SetCursorPos({ width - 2 * text_width, height - text_height });
 	ImGui::Text("hello %d", count);
+
+	if (count == 100) {
+		auto& audio_source = resource<resource::audio_source_t>("audio/test.wav");
+		audio::play(audio_source);
+	}
 }
 
 void performance_test::on_remove_quad()
@@ -27,8 +35,9 @@ void performance_test::on_remove_quad()
 
 void performance_test::on_load_resources()
 {
-	add_resource_search_path("assets/images/");
-	load_resource<resource::texture_t>("image.png", false);
+	add_resource_search_path("assets/");
+	load_resource<resource::texture_t>("images/image.png", false);
+	load_resource<resource::audio_source_t>("audio/test.wav");
 }
 
 void performance_test::on_create()
@@ -76,7 +85,7 @@ void performance_test::on_create()
 void performance_test::create_object(const glm::f32vec2& pos)
 {
 	game_object_t& obj = create_game_object();
-	auto& tex1 = resource<resource::texture_t>("image.png");
+	auto& tex1 = resource<resource::texture_t>("images/image.png");
 
 	obj.get<component::transform>().set_data(pos, { SIZE, SIZE });
 	obj.add<component::quad>(rand_value(), rand_value(), rand_value(), 1.0f, &tex1);

@@ -7,9 +7,8 @@ int main(int argc, const char** argv)
 {
 	srand(time(nullptr));
 
-
 	config_t config;
-	
+
 	config.vsync = false;
 	config.starting_scene = new performance_test();
 	config.window_size = { 1000, 500 };

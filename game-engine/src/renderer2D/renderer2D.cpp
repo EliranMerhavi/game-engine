@@ -93,6 +93,7 @@ void renderer2D::init()
 	// ------------------------------------------
 	// initialization of the quad vao
 	// ------------------------------------------
+
 	glCreateVertexArrays(1, &quad_vao);
 	glBindVertexArray(quad_vao);
 

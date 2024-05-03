@@ -1,6 +1,5 @@
 local includes = "game-engine/dependencies/include"
-local libs     = "game-engine/dependencies/libs"
-
+local static_libs = "game-engine/dependencies/static-libs"
 
 workspace "game-engine"
     startproject "Sandbox"   
@@ -15,7 +14,7 @@ project "game-engine"
 
     pchheader "pch.h"
     pchsource "%{prj.location}/src/pch.cpp"
-    
+
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
@@ -27,9 +26,9 @@ project "game-engine"
     }
 
     includedirs { includes, "game-engine/src" }
-    libdirs { libs, "bin/"}
+    libdirs { static_libs, "bin/" }
 
-    links {"opengl32.lib", "glfw3.lib", "glew32s.lib"}
+    links { "opengl32.lib", "glfw3.lib", "glew32s.lib", "OpenAL32.lib", "sndfile.lib" }
 
     filter "configurations:debug"
         defines { "DEBUG" }
@@ -54,10 +53,10 @@ project "Sandbox"
     files { "%{prj.location}/src/**.h", "%{prj.location}/src/**.cpp" }
 
     dependson "game-engine"
-    links {"game-engine.lib"}
+    links { "game-engine.lib" }
 
     includedirs { includes, "game-engine/src" }
-    libdirs { libs, "%{cfg.targetdir}" }
+    libdirs { static_libs, "%{cfg.targetdir}" }
 
     filter "configurations:debug"
         defines { "DEBUG" }
