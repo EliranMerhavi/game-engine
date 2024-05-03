@@ -3,7 +3,7 @@
 this is a game engine i built with friends for fun
 
 it is my biggest project so far and a big stepping stone for me. i started working on it since 2021 when i only started to learn about computer science and 
-most of my knowlege of programming, computer science and algorithms was learned and implemented for and during this project.
+most of my knowlege and skills in programming, computer science and software engineering was learned and implemented for and during this project.
 
 i whould like to thank mr WakaWaaa for the support on the physics engine stuff.
 
